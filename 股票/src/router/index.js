@@ -12,7 +12,7 @@ const routes = [
         path: '/home',
         name: 'home',
         component: () => import(/* webpackChunkName: "about" */ '../views/HomeView'),
-      },{
+      }, {
         path: '/news',
         name: 'news',
         component: () => import(/* webpackChunkName: "about" */ '../views/news'),
@@ -20,7 +20,7 @@ const routes = [
       {
         path: '/market',
         name: 'market',
-        component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+        component: () => import(/* webpackChunkName: "about" */ '../views/MarketPage.vue'),
       },
       {
         path: '/about',

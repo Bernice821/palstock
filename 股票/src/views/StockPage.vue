@@ -64,8 +64,8 @@
 </template>
 
 <script >
-import trend from '@/components/trend.vue'
-import analysis from '@/components/analysis.vue'
+import trend from './graph/trend.vue'
+import analysis from './graph/analysis.vue'
 
 export default {
   name: 'StockPage',

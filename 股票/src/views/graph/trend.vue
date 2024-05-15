@@ -12,8 +12,8 @@
 
 <script>
 import VueApexCharts from 'vue-apexcharts'
-import { seriesData } from '../data/stockPrice.js'
-import { VolData } from '../data/volume.js'
+import { seriesData } from '../../data/stockPrice.js'
+import { VolData } from '../../data/volume.js'
 
 export default {
   components: {

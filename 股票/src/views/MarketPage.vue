@@ -112,8 +112,8 @@
 </template>
 <script>
 import VueApexCharts from 'vue-apexcharts'
-import trend from '@/components/trend.vue'
-import Volume from '@/components/Volume.vue'
+import trend from './graph/trend.vue'
+import Volume from './graph/Volume.vue'
 
 export default {
   components: {

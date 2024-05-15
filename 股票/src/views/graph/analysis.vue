@@ -13,8 +13,8 @@
 
 <script>
 import VueApexCharts from 'vue-apexcharts'
-import { seriesData } from '../data/stockPrice.js'
-import { k, d, j } from '../data/kdj.js'
+import { seriesData } from '../../data/stockPrice.js'
+import { k, d, j } from '../../data/kdj.js'
 
 export default {
     components: {
