@@ -659,7 +659,22 @@
 <script>
 export default {
   name: 'App',
-  compatConfig: { MODE: 3 }
+  compatConfig: { MODE: 3 },
+  methods: {
+    async fetchNews(){
+      try {
+        const response = await axios.post('http://127.0.0.1:12000/api/newsStocks', {
+          StocksNum: 3,
+        });
+        const data = response.data;
+      } catch (error) {
+        console.error('Error fetching index:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchNews();
+  }
 }
 </script>
 <style>

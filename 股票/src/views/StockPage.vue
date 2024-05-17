@@ -81,6 +81,22 @@ export default {
         { 日期: '2024/1/2', 開: 159.23, 高: 161.23, 低: 158.22, 收: 160.23, 成交量: 402312 }
       ]
     }
+  },methods:{
+    async fetchInfo(){
+      try {
+        const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
+          StocksID:2330,
+          Stockstitle: "台積電",
+          time:7
+        });
+        const data = response.data;
+      } catch (error) {
+        console.error('Error fetching index:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchInfo();
   }
 }
 </script>
