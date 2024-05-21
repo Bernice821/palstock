@@ -808,13 +808,13 @@
   </div>
 </template>
 <script>
-// import 'vue-toastification/dist/index.css';
-// import GoTop from '@inotom/vue-go-top';
+import 'vue-toastification/dist/index.css';
+import GoTop from '@inotom/vue-go-top';
 import VueApexCharts from 'vue-apexcharts';
 
 export default {
   components: {
-    // GoTop,
+    GoTop,
     apexchart: VueApexCharts,
     timestamp: ""
   },
