@@ -49,7 +49,7 @@
             <li>
               <span></span>
             </li>
-            <h1 style="text-align:center;font-size:40px;margin-top:30%">7/10</h1>
+            <h1 style="text-align:center;font-size:40px;margin-top:30%">37/45</h1>
           </ul>
 
         </div>
@@ -75,12 +75,11 @@
 
     <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
-        <b-dropdown id="dropdown-1" text="期間" class="m-md-2" variant="outline-secondary">
-          <b-dropdown-item>當日</b-dropdown-item>
-          <b-dropdown-item>一個月</b-dropdown-item>
-          <b-dropdown-item>一年</b-dropdown-item>
-          <b-dropdown-item>五年</b-dropdown-item>
-          <b-dropdown-item>全部期間</b-dropdown-item>
+        <b-dropdown id="dropdown-1" text="期間" class="m-md-2" variant="outline-secondary" v-model="selectedPeriod">
+          <b-dropdown-item value="1_month">一個月</b-dropdown-item>
+          <b-dropdown-item value="3_months">三個月</b-dropdown-item>
+          <b-dropdown-item value="1_year">一年</b-dropdown-item>
+          <b-dropdown-item value="custom">自選</b-dropdown-item>
         </b-dropdown>
       </div>
       <div id='stock1' style="width:80%;"><trend/></div>
@@ -112,8 +111,8 @@
 </template>
 <script>
 import VueApexCharts from 'vue-apexcharts'
-import trend from '@/components/trend.vue'
-import Volume from '@/components/Volume.vue'
+import trend from './graph/trend.vue'
+import Volume from './graph/Volume.vue'
 
 export default {
   components: {
@@ -123,6 +122,7 @@ export default {
   },
   data () {
     return {
+      selectedPeriod: '1_month',
       chartOptions: {
         chart: {
           id: 'vuechart-example'
