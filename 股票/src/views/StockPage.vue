@@ -3,11 +3,12 @@
     <h3 class='text-2xl font-bold text-left py-2' style='color:#1B3C73;text-align:left'>個股資訊</h3>
 
     <div class="input">
-      <b-dropdown id="dropdown-1" v-model='inputType' text="選擇輸入項目" class="m-md-2" variant="outline-secondary">
-        <b-dropdown-item>股票名稱</b-dropdown-item>
-        <b-dropdown-item>股票代碼</b-dropdown-item>
-      </b-dropdown>
-      <b-form-input type='text' v-model='target' placeholder='請輸入欲查詢股票' style="width:50%; margin-left:1%;" @keyup.enter="submitQuery" required></b-form-input>
+      <select id="query_type" name="type" v-model="queryType">
+        <option disabled value="symbol" p>股票代碼</option>
+        <option value="symbol">股票代碼</option>
+        <option value="name">股票名稱</option>
+      </select>
+      <b-form-input type='text' v-model='queryTarget' placeholder='請輸入欲查詢股票' style="width:50%; margin-left:1%;" @keyup.enter="submitQuery" required></b-form-input>
       <b-button @click="submitQuery" variant="outline-secondary" style="margin-left:1%">搜尋</b-button>
     </div>
 
@@ -25,13 +26,12 @@
       <b-tabs content-class='mt-3'>
         <b-tab title='走勢圖'>
           <div style="margin-left:2%; width:50%">
-            <!-- <label for="period-select">選擇期間：</label> -->
             <select id="time-select" name="time" v-model="selectedTime">
-                <option disabled value="one_month">一個月</option>
-                <option value="one_month">一個月</option>
-                <option value="three_months">三個月</option>
-                <option value="one_year">一年</option>
-                <option value="custom">自選</option>
+              <option disabled value="one_month" p>一個月</option>
+              <option value="one_month">一個月</option>
+              <option value="three_months">三個月</option>
+              <option value="one_year">一年</option>
+              <option value="custom">自選</option>
             </select>
             <div v-if="selectedTime === 'custom'" style="margin-top:2%;">
               <b-form-group label="開始日期">
@@ -48,21 +48,6 @@
           </div>
         </b-tab>
         <b-tab title='分析' lazy>
-          <!-- <b-table striped :items="items" style="margin-left: 20px; width:70%; text-align: center;"></b-table> -->
-          <!-- <div class="col-3" style="z-index: 1; width:100%">
-            <b-dropdown id="dropdown-2" text="日線" class="m-md-2" variant="outline-secondary">
-              <b-dropdown-item>日線</b-dropdown-item>
-              <b-dropdown-item>週線</b-dropdown-item>
-              <b-dropdown-item>月線</b-dropdown-item>
-            </b-dropdown>
-          </div>
-          <div class="col-3" style="z-index: 1; width:100%">
-            <b-dropdown id="dropdown-3" text="KD,J值" class="m-md-2" variant="outline-secondary">
-              <b-dropdown-item>KD,J值</b-dropdown-item>
-              <b-dropdown-item>MACD</b-dropdown-item>
-              <b-dropdown-item>RSI</b-dropdown-item>
-            </b-dropdown>
-          </div> -->
           <div style="margin-left: 2%;">
             <select id="period-select" name="period" v-model="selectedPeriod">
               <option disabled value="daily">日線</option>
@@ -108,18 +93,22 @@ export default {
   },
   data () {
     return {
-      inputType: '股票代號',
-      target: '',
-      selectedPeriod: 'one_month',
-
+      queryType: '股票代號',
+      queryTarget: '',
+      selectedTime: 'one_month',
+      customStartDate_T: '',  
+      customEndDate_T: '',
+      selectedPeriod: 'daily',
+      customStartDate_P: '',  
+      customEndDate_P: '',
+      selectedIndex:''
     }
   },
   methods: {
     submitQuery() {
       const data = {
-        inputType: this.inputType, 
-        target: this.target,
-        selectedPeriod: this.selectedPeriod
+        queryType: this.queryType, 
+        queryTarget: this.queryTarget,
       }
     },
     async fetchInfo(){
@@ -223,7 +212,6 @@ select:focus {
     box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
 }
 
-/* 選項樣式 */
 select option {
     padding: 10px;
 }

@@ -27,7 +27,7 @@
         <div class="card2" style="width:100%">
           <h1 style="margin:2%;font-size: 24px;color:black;font-weight: 600;text-align:left">大盤總分歷史</h1>
           <div>
-            <apexchart width="90%" type="area" :options="chartOptions" :series="chartSeries"></apexchart>
+            <apexchart width="90%" type="area" :options="chartOptions" :series="seriesMarket"></apexchart>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
         <div class="card2" style="width:100%">
           <h1 style="margin:2%;font-size: 24px;color:black;font-weight: 600;text-align:left">景氣燈號歷史</h1>
           <div>
-            <apexchart width="90%" type="area" :options="chartOptions" :series="chartSeries"></apexchart>
+            <apexchart width="90%" type="area" :options="chartOptions" :series="seriesIndicator"></apexchart>
           </div>
         </div>
       </div>
@@ -75,12 +75,23 @@
 
     <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
-        <b-dropdown id="dropdown-1" text="期間" class="m-md-2" variant="outline-secondary" v-model="selectedPeriod">
-          <b-dropdown-item value="1_month">一個月</b-dropdown-item>
-          <b-dropdown-item value="3_months">三個月</b-dropdown-item>
-          <b-dropdown-item value="1_year">一年</b-dropdown-item>
-          <b-dropdown-item value="custom">自選</b-dropdown-item>
-        </b-dropdown>
+        <div style="margin-left:2%; width:50%">
+            <select id="time-select-Taiwan" name="time" v-model="selectedTime_Taiwan">
+              <option disabled value="one_month" p>一個月</option>
+              <option value="one_month">一個月</option>
+              <option value="three_months">三個月</option>
+              <option value="one_year">一年</option>
+              <option value="custom">自選</option>
+            </select>
+            <div v-if="selectedTime_Taiwan === 'custom'" style="margin-top:2%;">
+              <b-form-group label="開始日期">
+                <b-form-input type="date" v-model="customStartDate_Taiwan"></b-form-input>
+              </b-form-group>
+              <b-form-group label="結束日期">
+                <b-form-input type="date" v-model="customEndDate_Taiwan"></b-form-input>
+              </b-form-group>
+            </div>
+          </div>
       </div>
       <div id='stock1' style="width:80%;"><trend/></div>
 
@@ -97,13 +108,23 @@
 
     <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
-        <b-dropdown id="dropdown-1" text="期間" class="m-md-2" variant="outline-secondary">
-          <b-dropdown-item>當日</b-dropdown-item>
-          <b-dropdown-item>一個月</b-dropdown-item>
-          <b-dropdown-item>一年</b-dropdown-item>
-          <b-dropdown-item>五年</b-dropdown-item>
-          <b-dropdown-item>全部期間</b-dropdown-item>
-        </b-dropdown>
+        <div style="margin-left:2%; width:50%">
+            <select id="time-select-DJ" name="time" v-model="selectedTime_DJ">
+              <option disabled value="one_month" p>一個月</option>
+              <option value="one_month">一個月</option>
+              <option value="three_months">三個月</option>
+              <option value="one_year">一年</option>
+              <option value="custom">自選</option>
+            </select>
+            <div v-if="selectedTime_DJ === 'custom'" style="margin-top:2%;">
+              <b-form-group label="開始日期">
+                <b-form-input type="date" v-model="customStartDate_DJ"></b-form-input>
+              </b-form-group>
+              <b-form-group label="結束日期">
+                <b-form-input type="date" v-model="customEndDate_DJ"></b-form-input>
+              </b-form-group>
+            </div>
+          </div>
       </div>
       <div id='stock3' style="width:80%;"><trend/></div>
     </div>
@@ -113,6 +134,8 @@
 import VueApexCharts from 'vue-apexcharts'
 import trend from './graph/trend.vue'
 import Volume from './graph/Volume.vue'
+import { seriesData } from './data/stockPrice.js'
+
 
 export default {
   components: {
@@ -122,22 +145,48 @@ export default {
   },
   data () {
     return {
-      selectedPeriod: '1_month',
+      selectedTime_Taiwan: 'one_month',
+      customStartDate_Taiwan: '',  
+      customEndDate_Taiwan: '',
+      selectedTime_DJ: 'one_month',
+      customStartDate_DJ: '',  
+      customEndDate_DJ: '',
+      seriesMarket: [{ 
+        name: 'score',
+        data: seriesData 
+      }],
+      seriesIndicator: [{ 
+        name: 'score',
+        data: seriesData 
+      }],
       chartOptions: {
         chart: {
           id: 'vuechart-example'
         },
         xaxis: {
-          categories: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+          type: 'datetime',
         },
-        colors: ['#0E46A3']
+        colors: ['#7FC7D9'],
+        tooltip: {
+          enabled: true,
+          x: {
+              show: true,
+              format: 'yyyy/MM/dd',
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        fill: {
+          type: "gradient",
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            stops: [0, 90, 100]
+          }
+        },
       },
-      chartSeries: [
-        {
-          name: 'Vue Chart',
-          data: [155.95, 155.61, 156.92, 156.93, 157.01, 156.85, 157.01, 157.01, 157.02, 157.01, 157.01, 157.01, 157.01]
-        }
-      ]
     }
   }
 }
@@ -358,5 +407,26 @@ export default {
     margin-top: 2%;
     text-align: left;
     margin-left: 2%;
+}
+
+select {
+    font-size: 16px;
+    color: #333;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+select:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+}
+
+/* 選項樣式 */
+select option {
+    padding: 10px;
 }
 </style>
