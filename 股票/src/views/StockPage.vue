@@ -14,10 +14,10 @@
 
     <div class="stock-info" style="width:100%">
       <span class="stock-name">
-        <span> 股票名稱 </span>
-        <span> 2330 </span>
+        <span id="stockName"></span>
+        <span id="stockSymbol"></span>
       </span>
-      <span class="current-price" style="margin-left: 15px;">237.23</span>
+      <span id="priceToday" class="current-price" style="margin-left: 15px;"></span>
       <span class="change">+ 5.34</span>
       <span class="change"> (0.03%)</span>
     </div>
@@ -27,18 +27,18 @@
         <b-tab title='走勢圖'>
           <div style="margin-left:2%; width:50%">
             <select id="time-select" name="time" v-model="selectedTime">
-              <option disabled value="one_month" p>一個月</option>
-              <option value="one_month">一個月</option>
-              <option value="three_months">三個月</option>
-              <option value="one_year">一年</option>
+              <option disabled value='20' >一個月</option>
+              <option value='20' >一個月</option>
+              <option value='60' >三個月</option>
+              <option value='240' >一年</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedTime === 'custom'" style="margin-top:2%;">
               <b-form-group label="開始日期">
-                <b-form-input type="date" v-model="customStartDate_T"></b-form-input>
+                <b-form-input type="date" v-model="StartDate_T"></b-form-input>
               </b-form-group>
               <b-form-group label="結束日期">
-                <b-form-input type="date" v-model="customEndDate_T"></b-form-input>
+                <b-form-input type="date" v-model="EndDate_T"></b-form-input>
               </b-form-group>
             </div>
           </div>
@@ -50,18 +50,18 @@
         <b-tab title='分析' lazy>
           <div style="margin-left: 2%;">
             <select id="period-select" name="period" v-model="selectedPeriod">
-              <option disabled value="daily">日線</option>
-              <option value="daily">日線</option>
-              <option value="weekly">週線</option>
-              <option value="monthly">月線</option>
+              <option disabled value='5' >週線</option>
+              <option value='5' >週線</option>
+              <option value='20' >月線</option>
+              <option value='240' >年線</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedPeriod === 'custom'" style="margin-top:2%; margin-bottom: 2%;">
               <b-form-group label="開始日期">
-                <b-form-input type="date" v-model="customStartDate_P"></b-form-input>
+                <b-form-input type="date" v-model="StartDate_P"></b-form-input>
               </b-form-group>
               <b-form-group label="結束日期">
-                <b-form-input type="date" v-model="customEndDate_P"></b-form-input>
+                <b-form-input type="date" v-model="EndDate_P"></b-form-input>
               </b-form-group>
             </div>
 
@@ -82,15 +82,10 @@
 </template>
 
 <script >
-<<<<<<< HEAD
-import trend from '@/components/trend.vue'
-import analysis from '@/components/analysis.vue'
-import axios from 'axios';
-=======
 import trend from './graph/trend.vue'
 import analysis from './graph/analysis.vue'
+import axios from 'axios'
 
->>>>>>> 7247ff889a3788cefebf7203f6eac37bb236382c
 export default {
   name: 'StockPage',
   components: {
@@ -100,14 +95,36 @@ export default {
   data () {
     return {
       queryType: '股票代號',
-      queryTarget: '',
-      selectedTime: 'one_month',
-      customStartDate_T: '',  
-      customEndDate_T: '',
-      selectedPeriod: 'daily',
-      customStartDate_P: '',  
-      customEndDate_P: '',
-      selectedIndex:''
+      queryTarget: '2330',
+      selectedTime: '20',
+      StartDate_T: '',  
+      EndDate_T: '',
+      selectedPeriod: '5',
+      StartDate_P: '',  
+      EndDate_P: '',
+      selectedIndex:'KDJ'
+    }
+  },
+  watch: {
+    selectedTime: {
+      handler: 'fetchInfo', // 調用 fetchInfo 函數
+      immediate: true // 立即調用一次，以處理初始選擇
+    },
+    selectedPeriod: {
+      handler: 'fetchInfo', // 調用 fetchInfo 函數
+      immediate: true // 立即調用一次，以處理初始選擇
+    },
+    StartDate_T: {
+      handler: 'checkBothDate_T' 
+    },
+    EndDate_T: {
+      handler: 'checkBothDate_T' 
+    },
+    StartDate_P: {
+      handler: 'checkBothDate_P' 
+    },
+    EndDate_P: {
+      handler: 'checkBothDate_P' 
     }
   },
   methods: {
@@ -117,14 +134,112 @@ export default {
         queryTarget: this.queryTarget,
       }
     },
+    async checkBothDate_T() {
+      // 確保 StartDate_P 和 EndDate_P 都已經設置
+      if (this.StartDate_T && this.EndDate_T) {
+        // 都已經設置，可以調用 fetchInfo 函數
+        await this.fetchInfo();
+      } else {
+        // 如果其中一個日期未設置，則不執行任何操作
+        console.log('Both StartDate_T and EndDate_T must be set.');
+      }
+    },
+    async checkBothDate_P() {
+      // 確保 StartDate_P 和 EndDate_P 都已經設置
+      if (this.StartDate_P && this.EndDate_P) {
+        // 都已經設置，可以調用 fetchInfo 函數
+        await this.fetchInfo();
+      } else {
+        // 如果其中一個日期未設置，則不執行任何操作
+        console.log('Both StartDate_P and EndDate_P must be set.');
+      }
+    },
     async fetchInfo(){
+      let startDate_T = this.StartDate_T;
+      let endDate_T = this.EndDate_T;
+      let startDate_P = this.StartDate_P;
+      let endDate_P = this.EndDate_P;
+
+      if (this.selectedTime !== "custom") {
+        let today = new Date();
+        let selectedDays = parseInt(this.selectedTime);
+        let pastDate = new Date(today);
+        pastDate.setDate(today.getDate() - selectedDays);       
+        startDate_T = pastDate.toISOString().split('T')[0];
+        endDate_T = today.toISOString().split('T')[0];
+        if (!isNaN(pastDate.getTime())) {
+          startDate_T = pastDate.toISOString().split('T')[0];
+          endDate_T = today.toISOString().split('T')[0];
+        } else {
+          console.error('Invalid date:', pastDate);
+        }
+      }
+      if (this.selectedPeriod !== "custom") {
+        let today = new Date();
+        let selectedDays = parseInt(this.selectedPeriod);
+        let pastDate = new Date(today);
+        pastDate.setDate(today.getDate() - selectedDays);  
+        if (!isNaN(pastDate.getTime())) {
+          startDate_P = pastDate.toISOString().split('T')[0];
+          endDate_P = today.toISOString().split('T')[0];
+        } else {
+          console.error('Invalid date:', pastDate);
+        }
+      }
+
       try {
         const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
-          StocksID:2330,
-          Stockstitle: "台積電",
-          time:7
+          queryType: this.queryType,
+          queryTarget: this.queryTarget,
+          StartDate_T: startDate_T,
+          EndDate_T: endDate_T,
+          StartDate_P: startDate_P,
+          EndDate_P: endDate_P,
+          selectedIndex: this.selectedIndex
         });
         const data = response.data;
+        const fs = require('fs');
+        const path = require('path');
+
+        if (data.StatusCode === 200) {
+          const returnData = data.ReturnData;
+
+          const stockName = returnData.stockName;
+          document.getElementById('stockName').textContent = stockName;
+
+          const stockSymbol = returnData.stockSymbol;
+          document.getElementById('stockSymbol').textContent = stockSymbol;
+
+          const priceToday = returnData.priceToday;
+          document.getElementById('priceToday').textContent = priceToday;
+
+          const stockPriceFilePath = path.join(__dirname, 'data', 'stockPrice.js');
+          const stockPriceFileContent = `const stockPriceData = ${JSON.stringify(returnData.stockPrice, null, 2)};\nexport default stockPriceData;`;
+
+          fs.writeFile(stockPriceFilePath, stockPriceFileContent, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing stockPrice data to file:', err);
+            } else {
+              console.log('Stock price data successfully written to ./data/stockPrice.js');
+            }
+          });
+
+          // 寫入 volume 到 volume.js
+          const volumeFilePath = path.join(__dirname, 'data', 'volume.js');
+          const volumeFileContent = `const VolData = ${JSON.stringify(returnData.volume, null, 2)};\nexport default VolData;`;
+
+          fs.writeFile(volumeFilePath, volumeFileContent, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing volume data to file:', err);
+            } else {
+              console.log('Volume data successfully written to ./data/Volume.js');
+            }
+          })
+        // console.log('startDate_T:', startDate_T);
+        // console.log('endDate_T:', endDate_T);
+        // console.log('startDate_P:', startDate_P);
+        // console.log('endDate_P:', endDate_P);       
+        }
       } catch (error) {
         console.error('Error fetching index:', error);
       }
