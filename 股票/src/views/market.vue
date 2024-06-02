@@ -67,6 +67,7 @@
 </template>
 <script>
 import VueApexCharts from 'vue-apexcharts';
+import axios from 'axios';
 export default {
   components: {
     apexchart: VueApexCharts,

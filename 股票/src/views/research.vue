@@ -15,7 +15,8 @@
                         v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Time Periods</label></div>
-                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="TimePeriods" required>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="TimePeriods"
+                      required>
                       <option value="Year-To-Year">Year-To-Year</option>
                       <option value="Year/Month-To-Year/Month">Year/Month-To-Year/Month</option>
                     </select>
@@ -24,7 +25,157 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Start Year</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="StartYear" required>
+                      <option value="2018">2018</option>
+                      <option value="2019">2019</option>
+                      <option value="2020">2020</option>
+                      <option value="2021">2021</option>
+                      <option value="2022">2022</option>
+                      <option value="2023">2023</option>
 
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>End Year</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="EndYear" required>
+                      <option value="2018">2019</option>
+                      <option value="2019">2020</option>
+                      <option value="2020">2021</option>
+                      <option value="2021">2022</option>
+                      <option value="2022">2023</option>
+                      <option value="2023">2024</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>First Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="FirstMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Last Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="LastMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="TimePeriods === 'Year/Month-To-Year/Month'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Start Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="StartMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="TimePeriods === 'Year/Month-To-Year/Month'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>End Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="EndMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -66,10 +217,45 @@
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>CashFlows</label></div>
                   <div class="col"><select id="dropdown" name="role" class="form-control" required v-model="CashFlows">
-                      <option disabled selected value>Yes</option>
-                      <option value="固定收入">固定投入</option>
+                      <option value="固定投入">固定投入</option>
                       <option value="固定領出">固定領出</option>
                       <option value="不投入也不領出">不投入也不領出</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="CashFlows != '不投入也不領出'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Contribution Amount</label></div>
+                  <div class="col"><input type="number" min="100" max="2000" step="1" value="100"
+                      placeholder="Enter your initial amount" class="form-control" required
+                      v-model="ContributionAmount" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="CashFlows != '不投入也不領出'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Contribution Frequency</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" required
+                      v-model="ContributionFrequency">
+                      <option value="一個月">一個月</option>
+                      <option value="三個月">三個月</option>
+                      <option value="半年">半年</option>
+                      <option value="一年">一年</option>
                     </select>
                   </div>
                 </div>
@@ -84,7 +270,8 @@
                         v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Rebalancing</label></div>
-                  <div class="col"><select id="dropdown" name="role" class="form-control" required v-model="Rebalancing">
+                  <div class="col"><select id="dropdown" name="role" class="form-control" required
+                      v-model="Rebalancing">
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
                     </select>
@@ -101,7 +288,8 @@
                         v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Reinvest Dividends</label></div>
-                  <div class="col"><select id="dropdown" name="role" class="form-control" required v-model="ReinvestDividends">
+                  <div class="col"><select id="dropdown" name="role" class="form-control" required
+                      v-model="ReinvestDividends">
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
                     </select>
@@ -118,7 +306,8 @@
                         v-b-popover.hover.top="'I am popover directive content*'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px;">
                         *</b-button>Display Income</label></div>
-                  <div class="col"><select id="dropdown" name="role" class="form-control" required v-model="DisplayIncome">
+                  <div class="col"><select id="dropdown" name="role" class="form-control" required
+                      v-model="DisplayIncome">
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
                     </select>
@@ -171,7 +360,8 @@
                       </td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="佔總資產比例" min="0" max="100">
+                          <input type="number" class="form-control" placeholder="佔總資產比例" min="0" max="100"
+                            v-model.number="rowData[index - 1].allocation1">
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -179,7 +369,8 @@
                       </td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="第二配置" min="0" max="100">
+                          <input type="number" class="form-control" placeholder="第二配置" min="0" max="100"
+                            v-model.number="rowData[index - 1].allocation2">
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -187,7 +378,8 @@
                       </td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="第三配置" min="0" max="100">
+                          <input type="number" class="form-control" placeholder="第三配置" min="0" max="100"
+                            v-model.number="rowData[index - 1].allocation3">
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -201,7 +393,8 @@
                       <td></td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="0" min="0" max="100" disabled>
+                          <input type="number" class="form-control" placeholder="0" min="0" max="100"
+                            :value="totalAllocation1" disabled>
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -209,7 +402,8 @@
                       </td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="0" min="0" max="100" disabled>
+                          <input type="number" class="form-control" placeholder="0" min="0" max="100"
+                            :value="totalAllocation2" disabled>
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -217,7 +411,8 @@
                       </td>
                       <td>
                         <div class="input-group mb-2">
-                          <input type="number" class="form-control" placeholder="0" min="0" max="100" disabled>
+                          <input type="number" class="form-control" placeholder="0" min="0" :value="totalAllocation3"
+                            disabled>
                           <div class="input-group-prepend">
                             <div class="input-group-text">%</div>
                           </div>
@@ -244,61 +439,97 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
-      TimePeriods:0,
-      StartYear:0,
-      EndYear:0,
-      FirstMonth:0,
-      LastMonth:0,
-      IncludeYTD:0,
-      initialAmount:0,
-      CashFlows:"",
-      ContributionAmount:"",
-      ContributionFrequency:"",
-      Rebalancing:"",
-      ReinvestDividends:0,
-      DisplayIncome:0,
-      Benhmark:0,
-      Portfolios:{},
-      StockID:0,
-      part:[],
-      rowData: [
-        { name: '', quantity: '' },
-        { name: '', quantity: '' },
-        { name: '', quantity: '' },
-        { name: '', quantity: '' },
-        { name: '', quantity: '' },
-      ]
+      TimePeriods: "Year-To-Year",
+      StartYear: 0,
+      EndYear: 0,
+      FirstMonth: 0,
+      LastMonth: 0,
+      IncludeYTD: 0,
+      initialAmount: 0,
+      CashFlows: "固定投入",
+      ContributionAmount: "",
+      ContributionFrequency: "",
+      Rebalancing: "",
+      ReinvestDividends: 0,
+      DisplayIncome: 0,
+      Benhmark: 0,
+      Portfolios: {},
+      StockID: 0,
+      part: [],
+      rowData: Array.from({ length: 5 }, () => ({
+        name: '',
+        allocation1: 0,
+        allocation2: 0,
+        allocation3: 0,
+      })),
     };
-  },methods:{
-    async analysis(){
+  }, methods: {
+    async analysis() {
+      if (this.totalAllocation1 > 100 || this.totalAllocation2 > 100 || this.totalAllocation3 > 100) {
+        alert('請勿超過100%!');
+        return;
+      }
+      if (this.TimePeriods === "" || this.StartYear === 0 || this.EndYear === 0 || this.FirstMonth === 0 || this.LastMonth === 0 ||
+        this.IncludeYTD===0 || this.initialAmount === 0 || this.CashFlows==="" || this.Rebalancing === ""|| this.ReinvestDividends === 0 || this.DisplayIncome === "" || this.Benchmark === 0) {
+        alert('未完成填寫！');
+        return; // 不執行分析操作
+      }
       try {
         console.log(this.initialAmount)
         const response = await axios.post('http://127.0.0.1:12000/api/StrategyStock', {
-          TimePeriods:this.TimePeriods,
-          StartYear:this.StartYear,
-          EndYear:this.EndYear,
-          FirstMonth:this.FirstMonth,
-          LastMonth:this.LastMonth,
-          IncludeYTD:this.IncludeYTD,
-          initialAmount:this.initialAmount,
-          CashFlows:this.CashFlows,
-          ContributionAmount:this.ContributionAmount,
-          ContributionFrequency:this.ContributionFrequency,
-          Rebalancing:this.Rebalancing,
-          ReinvestDividends:this.ReinvestDividends,
-          DisplayIncome:this.DisplayIncome,
-          Benhmark:this.Benchmark,
-          Portfolios:this.Portfolios,
-          StockID:this.StockID,
-          part:this.part
+          TimePeriods: this.TimePeriods,
+          StartYear: this.StartYear,
+          EndYear: this.EndYear,
+          FirstMonth: this.FirstMonth,
+          LastMonth: this.LastMonth,
+          IncludeYTD: this.IncludeYTD,
+          initialAmount: this.initialAmount,
+          CashFlows: this.CashFlows,
+          ContributionAmount: this.ContributionAmount,
+          ContributionFrequency: this.ContributionFrequency,
+          Rebalancing: this.Rebalancing,
+          ReinvestDividends: this.ReinvestDividends,
+          DisplayIncome: this.DisplayIncome,
+          Benhmark: this.Benchmark,
+          Portfolios: this.Portfolios,
+          StockID: this.StockID,
+          part: this.part
         });
         const data = response.data;
       } catch (error) {
         console.error('Error fetching index:', error);
       }
+    },
+  }, watch: {
+    totalAllocation1(newValue) {
+      if (newValue > 100) {
+        alert('The total of allocation 1 exceeds 100%');
+      }
+    },
+    totalAllocation2(newValue) {
+      if (newValue > 100) {
+        alert('The total of allocation 2 exceeds 100%');
+      }
+    },
+    totalAllocation3(newValue) {
+      if (newValue > 100) {
+        alert('The total of allocation 3 exceeds 100%');
+      }
+    }
+  },
+  computed: {
+    totalAllocation1() {
+      return this.rowData.reduce((sum, row) => sum + Number(row.allocation1 || 0), 0);
+    },
+    totalAllocation2() {
+      return this.rowData.reduce((sum, row) => sum + Number(row.allocation2 || 0), 0);
+    },
+    totalAllocation3() {
+      return this.rowData.reduce((sum, row) => sum + Number(row.allocation3 || 0), 0);
     },
   },
   mounted() {
@@ -314,7 +545,8 @@ body {
   text-align: left;
   background-color: #fff;
 }
-.form-group{
-  margin-top:3%
+
+.form-group {
+  margin-top: 3%
 }
 </style>

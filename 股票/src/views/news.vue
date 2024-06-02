@@ -677,7 +677,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .col {
   padding: 0;
 }

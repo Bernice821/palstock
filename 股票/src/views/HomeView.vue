@@ -811,7 +811,7 @@
 import 'vue-toastification/dist/index.css';
 import GoTop from '@inotom/vue-go-top';
 import VueApexCharts from 'vue-apexcharts';
-
+import axios from 'axios';
 export default {
   components: {
     GoTop,
@@ -868,7 +868,8 @@ export default {
       compatConfig: { MODE: 3 }
     };
   }, created() {
-    setInterval(this.getNow, 1000);
+    this.updateTimestamp(); 
+    setInterval(this.updateTimestamp, 1000); 
   },
   methods: {
     async fetchIndex() {
@@ -886,7 +887,7 @@ export default {
         console.error('Error fetching index:', error);
       }
     },
-    async fetchNews(){
+    async fetchNews() {
       try {
         const response = await axios.post('http://127.0.0.1:12000/api/newsStocks', {
           StocksNum: 3,
@@ -895,16 +896,21 @@ export default {
         console.error('Error fetching index:', error);
       }
     },
-    getNow: function () {
+    updateTimestamp() {
       const today = new Date();
-      const date = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
-      const dateTime = date;
+      const dateTime = today.getFullYear() + '/' +
+        String(today.getMonth() + 1).padStart(2, '0') + '/' +
+        String(today.getDate()).padStart(2, '0') + ' ' +
+        String(today.getHours()).padStart(2, '0') + ':' +
+        String(today.getMinutes()).padStart(2, '0') + ':' +
+        String(today.getSeconds()).padStart(2, '0');
       this.timestamp = dateTime;
     }
   },
   mounted() {
     this.fetchIndex();
     this.fetchNews();
+    this.updateTimestamp();
   }
 };
 </script>

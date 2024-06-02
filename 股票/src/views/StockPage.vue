@@ -66,7 +66,7 @@
 <script >
 import trend from '@/components/trend.vue'
 import analysis from '@/components/analysis.vue'
-
+import axios from 'axios';
 export default {
   name: 'StockPage',
   components: {
