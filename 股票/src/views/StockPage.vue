@@ -4,7 +4,7 @@
 
     <div class="input">
       <select id="query_type" name="type" v-model="queryType">
-        <option disabled value="symbol" p>股票代碼</option>
+        <option disabled value="symbol">股票代碼</option>
         <option value="symbol">股票代碼</option>
         <option value="name">股票名稱</option>
       </select>
@@ -14,12 +14,14 @@
 
     <div class="stock-info" style="width:100%">
       <span class="stock-name">
-        <span id="stockName"></span>
-        <span id="stockSymbol"></span>
+        <span id="stock-name" style="margin-right: 10px;">{{ stockName }}</span>
+        <span id="stock-symbol">{{ stockSymbol }}</span>
       </span>
-      <span id="priceToday" class="current-price" style="margin-left: 15px;"></span>
-      <span class="change">+ 5.34</span>
-      <span class="change"> (0.03%)</span>
+      <span class="current-price">
+        <span id="price-today" style="font-size: 48px;">{{ priceToday }}</span>
+        <span id="price-change" style="margin-left: 10px;">{{ priceChange }}</span>
+        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent }}%)</span>
+      </span>
     </div>
 
     <div class="stock-tab">
@@ -73,7 +75,15 @@
             </select>
           </div>
           <div id='stock2' style="width:80%;">
-            <analysis />
+            <div v-if="selectedIndex === 'KDJ'">
+              <kdjGraph />
+            </div>
+            <div v-if="selectedIndex === 'MACD'">
+              <macdGraph />
+            </div>
+            <div v-if="selectedIndex === 'RSI'">
+              <rsiGraph />
+            </div>
           </div>
         </b-tab>
       </b-tabs>
@@ -83,18 +93,24 @@
 
 <script >
 import trend from './graph/trend.vue'
-import analysis from './graph/analysis.vue'
+import kdjGraph from './graph/KDJ.vue'
+import rsiGraph from './graph/RSI.vue'
+import macdGraph from './graph/MACD.vue'
 import axios from 'axios'
 
 export default {
   name: 'StockPage',
   components: {
     trend,
-    analysis
+    kdjGraph,
+    rsiGraph,
+    macdGraph
   },
   data () {
     return {
-      queryType: '股票代號',
+      stockName: '台積電',
+      stockSymbol: '2330',
+      queryType: 'symbol',
       queryTarget: '2330',
       selectedTime: '20',
       StartDate_T: '',  
@@ -102,7 +118,11 @@ export default {
       selectedPeriod: '5',
       StartDate_P: '',  
       EndDate_P: '',
-      selectedIndex:'KDJ'
+      selectedIndex:'KDJ',
+      priceToday: 213.12, 
+      priceYesterday: 211.94,
+      // priceChange: '',
+      // priceChangePercent: ''
     }
   },
   watch: {
@@ -129,10 +149,23 @@ export default {
   },
   methods: {
     submitQuery() {
-      const data = {
-        queryType: this.queryType, 
-        queryTarget: this.queryTarget,
+      if (!this.queryType) {
+        alert('請選擇股票代碼或股票名稱');
+        return;
       }
+
+      if (this.queryType === 'symbol') {
+        if (!/^[A-Za-z0-9]+$/.test(this.queryTarget)) {
+          alert('請輸入有效的股票代碼');
+          return;
+        }
+      } else if (this.queryType === 'name') {
+        if (!this.queryTarget.trim()) {
+          alert('請輸入有效的股票名稱');
+          return;
+        }
+      }
+      this.fetchInfo();
     },
     async checkBothDate_T() {
       // 確保 StartDate_P 和 EndDate_P 都已經設置
@@ -205,14 +238,16 @@ export default {
           const returnData = data.ReturnData;
 
           const stockName = returnData.stockName;
-          document.getElementById('stockName').textContent = stockName;
+          document.getElementById('stock-name').textContent = stockName;
 
           const stockSymbol = returnData.stockSymbol;
-          document.getElementById('stockSymbol').textContent = stockSymbol;
+          document.getElementById('stock-symbol').textContent = stockSymbol;
 
-          const priceToday = returnData.priceToday;
-          document.getElementById('priceToday').textContent = priceToday;
-
+          // this.priceToday = 319.31;
+          // this.priceYesterday = 315.23;
+          this.priceToday = returnData.priceToday;
+          this.priceYesterday = returnData.priceYesterday;
+          this.changeColor();
           const stockPriceFilePath = path.join(__dirname, 'data', 'stockPrice.js');
           const stockPriceFileContent = `const stockPriceData = ${JSON.stringify(returnData.stockPrice, null, 2)};\nexport default stockPriceData;`;
 
@@ -235,15 +270,40 @@ export default {
               console.log('Volume data successfully written to ./data/Volume.js');
             }
           })
-        // console.log('startDate_T:', startDate_T);
-        // console.log('endDate_T:', endDate_T);
-        // console.log('startDate_P:', startDate_P);
-        // console.log('endDate_P:', endDate_P);       
         }
+        // console.log('queryType:', this.queryType);
+        // console.log('queryTarget:', this.queryTarget);
+        // console.log('priceToday:', this.priceToday)   
       } catch (error) {
         console.error('Error fetching index:', error);
       }
     },
+    changeColor() {
+      const elm1 = document.getElementById("price-change");
+      const elm2 = document.getElementById("price-change-percent");
+      const elm3 = document.getElementById("price-today");
+      if(this.priceChange > 0){       
+        elm1.style.color = '#EF403C';
+        elm1.textContent = `▲${this.priceChange}`;
+        elm2.style.color = '#EF403C';
+        elm3.style.color = '#EF403C';
+      }else if (this.priceChange < 0) {
+        elm1.style.color = '#00B746';       
+        elm2.style.color = '#00B746';
+        elm3.style.color = '#00B746';
+        let noMinus = Math.abs(this.priceChange);
+        elm1.textContent = `▼${noMinus}`;
+      }
+    },
+  },
+  computed: {
+    priceChange() {
+      return (this.priceToday - this.priceYesterday).toFixed(2);
+    },
+    priceChangePercent()
+    {
+      return ((this.priceChange/this.priceYesterday)*100).toFixed(2);
+    }
   },
   mounted() {
     this.fetchInfo();
@@ -289,14 +349,11 @@ body {
 }
 
 .current-price {
-    font-size: 48px;
+    font-size: 24px;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.change {
-    font-size: 20px;
-    color: #D24545; /*或者是red，根据涨跌情况设置颜色*/
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .stock-name {

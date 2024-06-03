@@ -42,7 +42,7 @@ export default {
           fixed: {
             enabled: true,
             position: 'top',
-            offsetX: -150,
+            offsetX: -125,
             offsetY: 150, // 在這裡設置頂部偏移量
           },
         },
@@ -63,7 +63,7 @@ export default {
         chart: {
           group: 'stock',
           id: 'volume',
-          type: 'bar',
+          type: 'column',
         },
         plotOptions: {
             bar: {
@@ -90,6 +90,9 @@ export default {
         },
         tooltip: {
           enabled: true,
+          marker: {
+              fillColor: '#000000'
+          },
           x: {
             show: true,
             format: 'yyyy/MM/dd'
@@ -103,7 +106,7 @@ export default {
           fixed: {
             enabled: true,
             position: 'top',
-            offsetX: -150,
+            offsetX: -125,
             offsetY: 0, // 在這裡設置頂部偏移量
           },
         },
