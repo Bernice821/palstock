@@ -65,7 +65,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.PUB1_KEY }}
-        publish_dir: ./stock/dist
+        publish_dir: ./stock/dir
 
     # 如果需要部署后端，可以在这里添加部署脚本，例如部署到Heroku，AWS，或其他服务
     # - name: Deploy backend
