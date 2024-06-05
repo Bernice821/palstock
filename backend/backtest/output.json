@@ -1,0 +1,34 @@
+{
+    "StatusCode": 200,
+    "Message": "Success",
+    "ReturnData": [
+        {
+            "title": "Buy and hold",
+            "Portfolio": 0.092,
+            "FinalBalance": 51620.13,
+            "CAGR": 0.03,
+            "TWRR": 2.9698,
+            "MIRR": 0.0169,
+            "Stdev": 0.3,
+            "BestYear": 0.31,
+            "WorstYear": -0.29,
+            "Max.Drawdown": 25.19,
+            "SharpeRatio": 1.58,
+            "SortioRatio": 0.44
+        },
+        {
+            "title": "Buy and hold",
+            "Portfolio": 0.071,
+            "FinalBalance": 39851.836,
+            "CAGR": 0.023,
+            "TWRR": 2.9163,
+            "MIRR": 0.0163,
+            "Stdev": 0.29,
+            "BestYear": 0.23,
+            "WorstYear": -0.25,
+            "Max.Drawdown": 14.43,
+            "SharpeRatio": 1.59,
+            "SortioRatio": 0.38
+        }
+    ]
+}

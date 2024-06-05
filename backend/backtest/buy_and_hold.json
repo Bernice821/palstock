@@ -1,0 +1,30 @@
+{
+    "TimePeriods": 0,
+    "StartYear": 2021,
+    "EndYear": 2023,
+    "FirstMonth": 1,
+    "LastMonth": 12,
+    "IncludeYTD": 0,
+    "initialAmount": 200000,
+    "CashFlows": "Contribute fixed amount",
+    "ContributionAmount": 10000,
+    "ContributionFrequency": "Annually/Quarterly/Monthly",
+    "Rebalancing": "None/Annually/Semi-Annually/Quarterly/Monthly",
+    "ReinvestDividends": 0,
+    "DisplayIncome": 0,
+    "Benhmark": 1,
+    "Portfolios": [
+        {
+            "StockID": "2330.TW",
+            "part": [30, 20, 0]
+        },
+        {
+            "StockID": "0050.TW",
+            "part": [50, 40, 60]
+        },
+        {
+            "StockID": "006208.TW",
+            "part"   : [20, 40, 40]
+        }
+    ]
+}
