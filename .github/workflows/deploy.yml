@@ -35,7 +35,7 @@ jobs:
 
     - name: Install dependencies (frontend)
       working-directory: ./stock
-      run: npm install
+      run: npm install --force
 
     - name: Build frontend
       working-directory: ./stock
