@@ -34,20 +34,20 @@ jobs:
         node-version: '16'
 
     - name: Install dependencies (frontend)
-      working-directory: ./frontend
+      working-directory: ./stock
       run: npm install
 
     - name: Build frontend
-      working-directory: ./frontend
+      working-directory: ./stock
       run: npm run build
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.9'
+        python-version: '3.10.1'
 
     - name: Install dependencies (backend)
-      working-directory: ./backend
+      working-directory: ./stock
       run: |
         python -m venv venv
         source venv/bin/activate
