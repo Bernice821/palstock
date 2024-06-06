@@ -1,12 +1,12 @@
 <template>
   <div id="chart" >
-    <apexchart type="bar" height="350" :options="chartOptions2" :series="series2"></apexchart>
+    <!-- <apexchart type="bar" height="350" :options="chartOptions2" :series="series2"></apexchart> -->
   </div>
 </template>
 
 <script>
 import VueApexCharts from 'vue-apexcharts'
-// import { seriesData } from '../data/stockPrice.js'
+import { VolData } from '../data/volume.js'
 
 export default {
   components: {
@@ -15,7 +15,8 @@ export default {
   data () {
     return {
       series2: [{ 
-        data: generateDayWiseTimeSeries(new Date('2024-02-01').getTime(), 60, { min: 6203,max: 100000})
+        name: '成交量',
+        data: VolData
       }],
       chartOptions2: {
         chart: {

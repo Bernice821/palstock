@@ -4,7 +4,7 @@
             <apexchart type="candlestick" height="400" :options="chartOptions1" :series="series1"></apexchart>
         </div>
         <div id="analysis">
-            <apexchart type="line" height="200" :options="chartOptions2" :series="series2" style="margin-top: 5%;">
+            <apexchart height="200" :options="chartOptions2" :series="series2" style="margin-top: 5%;">
             </apexchart>
         </div>
 
@@ -14,7 +14,7 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import { seriesData } from '../data/stockPrice.js'
-import { k, d, j } from '../data/kdj.js'
+import { DIF, MACD, DIF_MACD } from '../data/macd.js'
 
 export default {
     components: {
@@ -32,58 +32,9 @@ export default {
                 },
                 xaxis: {
                     type: 'datetime',
-                },
-                tooltip: {
-                    enabled: true,
-                    x: {
-                        show: true,
-                        format: 'yyyy/MM/dd',
-                    },
-                    fixed: {
-                        enabled: true,
-                        position: 'top',
-                        offsetX: -150,
-                        offsetY: 150, // 在這裡設置頂部偏移量
-                    },
-                },
-            },
-            series2: [
-                {
-                    name: "K",
-                    data: k
-                },
-                {
-                    name: "D",
-                    data: d
-                },
-                {
-                    name: "J",
-                    data: j
-                },
-            ],
-            chartOptions2: {
-                chart: {
-                    group: 'stock',
-                    id: 'analysis',
-                    type: 'line',
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '55%',
-                        endingShape: 'rounded'
+                    tooltip: {
+                        enabled: false
                     }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'straight',
-                    width: 2,
-                    dashArray: [0, 0, 3]
-                },
-                xaxis: {
-                    type: 'datetime'
                 },
                 yaxis: {
                     tooltip: {
@@ -94,22 +45,102 @@ export default {
                     enabled: true,
                     x: {
                         show: true,
-                        format: 'yyyy/MM/dd'
+                        // format: 'yyyy/MM/dd',
                     },
                     y: {
                         show: true,
-                        // title: {
-                        //     formatter: () => '成交量 = ', 
-                        // }
                     },
                     fixed: {
                         enabled: true,
                         position: 'top',
-                        offsetX: -150,
+                        offsetX: -125,
+                        offsetY: 150, // 在這裡設置頂部偏移量
+                    },
+                },
+            },
+            series2: [
+                {
+                    name: "DIF",
+                    data: DIF,
+                    type: "line"
+                },
+                {
+                    name: "MACD",
+                    data: MACD,
+                    type: "line",
+                    color: '#FEB019'
+                    
+                },
+                {
+                    name: "DIF_MACD",
+                    data: DIF_MACD,
+                    type: 'column'
+                },
+            ],
+            chartOptions2: {
+                chart: {
+                    group: 'stock',
+                    id: 'analysis',
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        colors: {
+                            ranges: [{
+                                from: -999,
+                                to: 0,
+                                color: '#006030'
+                            }, {
+                                from: 0,
+                                to: 999,
+                                color: '#CE0000'
+                            }]
+                        },
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'straight',
+                    width: [2,2,0],
+                },
+                xaxis: {
+                    type: 'datetime',
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                yaxis: {
+                    tooltip: {
+                        enabled: false,
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    marker: {
+                        fillColors: ['#008FFB', '#FEB019', '#CE0000']
+                    },
+                    x: {
+                        show: true,
+                        format: 'yyyy/MM/dd'
+                    },
+                    y: {
+                        show: true,
+                    },
+                    fixed: {
+                        enabled: true,
+                        position: 'top',
+                        offsetX: -125,
                         offsetY: 0, // 在這裡設置頂部偏移量
                     },
                 },
-                colors: ['#7ED7C1', '#F0DBAF', '#DC8686'],
+                legend: {
+                    markers: {
+                        fillColors: ['#008FFB', '#FEB019', '#CE0000']
+                    },
+                }                
             }
         }
     }
