@@ -6,6 +6,7 @@ import calendar
 import matplotlib.pyplot as plt
 from datetime import date
 import math
+import os
 
 
 #buy and hold 策略
@@ -15,6 +16,9 @@ class BuyAndHold_More_Fund(bt.Strategy):
         month_sum= 0,
         withdraw= 0,
         deposit= 0,
+        allocation= [],
+        frequency= 1,
+        rebalancing= 1,
     )  
 
     def start(self):
@@ -35,33 +39,40 @@ class BuyAndHold_More_Fund(bt.Strategy):
 
     def stop(self):
         if(self.p.monthly_cash< 0):
-            self.p.withdraw= -self.p.withdraw
+            self.p.deposit= 0
         else:
             self.p.deposit= self.p.withdraw
             self.p.withdraw= 0
+            
         
         self.cashflows.append(self.broker.get_value())
-        self.Roi= round((self.broker.getvalue()+ self.p.withdraw)/(self.cash_start+ self.p.deposit)-1,3)
+        self.Roi= round((self.broker.getvalue()- self.p.withdraw)/(self.cash_start+ self.p.deposit)-1,3)
         self.CAGR= round(math.pow(self.Roi+1, 1/(self.p.month_sum/12))-1,3)
-        self.FinalBalance= round(cerebro.broker.getvalue()- self.cash_start- self.p.month_sum*ContributionAmount,3)
+        self.FinalBalance= round(cerebro.broker.getvalue()- self.cash_start- self.p.withdraw,3)
         self.BestYear, self.WorstYear= self.YearReturn()
 
     def notify_timer(self, timer, when, *args, **kwargs):
-        self.p.month_sum+= 1
-
-        if self.data.datetime.date(0).year not in self.yearly_cash: 
+            
+        if self.data.datetime.date(0).year not in self.yearly_cash:
             self.yearly_cash[self.data.datetime.date(0).year]= 0
             self.yearly_value[self.data.datetime.date(0).year]= self.broker.get_value()
         
         if self.broker.get_value()+ self.p.monthly_cash> 0:
-            self.order_target_value(target= int((self.broker.get_value()+ self.p.monthly_cash) * 0.9))
-            self.p.withdraw+= self.p.monthly_cash
-            self.yearly_cash[self.data.datetime.date(0).year]+= self.p.monthly_cash
+            iter= 0
+            if  self.p.month_sum% self.p.rebalancing== 0:
+                for i, d in enumerate(self.datas):
+                    self.order_target_value(data= d, target= int(0.9* self.broker.get_value()* self.p.allocation[iter]))
+                    iter+= 1
 
-            # Add the influx of monthly cash to the broker
-            self.broker.add_cash(self.p.monthly_cash)
+            if self.p.frequency!= 0 and self.p.month_sum% self.p.frequency== 0:
+                self.p.withdraw+= self.p.monthly_cash
+                self.yearly_cash[self.data.datetime.date(0).year]+= self.p.monthly_cash
+                self.broker.add_cash(self.p.monthly_cash)
 
-        else:   self.order_target_value(target= 0)
+        elif self.p.frequency!= 0 and self.p.month_sum% self.p.frequency== 0:
+            for i, d in enumerate(self.datas):    self.order_target_value(data= d, target= 0)
+
+        self.p.month_sum+= 1
 
     def YearReturn(self):
             value= list(self.yearly_value.values())
@@ -246,47 +257,78 @@ def calculate_mirr(cashflows, finance_rate, reinvest_rate):
 
 
 if __name__ == '__main__':
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    input_path  = os.path.join(current_dir, './buy_and_hold.json')
+    output_path  = os.path.join(current_dir, './output.json')
 
     #獲取傳入json檔資料
-    with open('./backtest/buy_and_hold.json', 'r') as f:
+    with open(input_path, 'r') as f:
         data = json.load(f)
     Timeperiod= data['EndYear']- data['StartYear']+ 1
     StartYear, StartMonth= data['StartYear'], data['FirstMonth']
     EndYear, EndMonth= data['EndYear'], data['LastMonth']
     EndYear= data['EndYear']
+    Rebalancing= 1
     initial_Amount= data['initialAmount']
     ContributionAmount= 0
     Withdraw_account= 0
+    Benhmark= data["Benhmark"]
     Deposit_account= 0
+    Frequency= 0
 
     if data['CashFlows']== 'Contribute fixed amount':   ContributionAmount= data['ContributionAmount']
     elif data['CashFlows']== 'Withdraw fixed amount':    ContributionAmount= -data['ContributionAmount']
+    
+    if data['ContributionFrequency']== "Annually":  Frequency= 12
+    elif data["ContributionFrequency"]== "Monthly": Frequency= 1
+    elif data["ContributionFrequency"]== "Quarterly": Frequency= 6
+
+    if data['Rebalancing']== "Annually":    Rebalancing= 12
+    elif data['Rebalancing']== "Monthly":   Rebalancing= 1
+    elif data['Rebalancing']== "Quarterly": Rebalancing= 3
+    elif data['Rebalancing']== "Semi-Annually": Rebalancing= 6
+
 
     #建立回傳字典
     Returndict= {'StatusCode': 200, 'Message': 'Success', 'ReturnData': []}
 
     #try:
-    for portfolio in data['Portfolios']:
-
+    for i in range(len(data['Portfolios'][0]['part'])):
+        
         # 設置回傳字典
         Returndata= dict()
-        #抓出回測股票代號
-        StockID= portfolio['StockID']
-        print(StockID)
+        Part= []
         
         # 初始化 Cerebro 引擎 & 添加策略
         cerebro = bt.Cerebro()
-        cerebro.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount)
-
+        TWII= bt.Cerebro()
+        
+        print(data['Portfolios'])
+        
+        for portfolio in data['Portfolios']:
+            #抓出回測股票代號
+            StockID= portfolio['StockID']
+            Part.append(portfolio['part'][i]/100)
+            # 添加個股相關數據
+            stock_data = bt.feeds.PandasData(dataname=yf.download(StockID, start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
+            cerebro.adddata(stock_data)
+        #大盤購買策略
+        if Benhmark== 1:
+            stock_data = bt.feeds.PandasData(dataname=yf.download('^TWII', start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
+            TWII.adddata(stock_data)
+            TWII.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount, allocation= [1], frequency= Frequency, rebalancing= Rebalancing)
+            TWII.broker.setcash(initial_Amount)
+            TWII.broker.setcommission(commission=0.001)
+            TWII_results= TWII.run()
+            
+        cerebro.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount, allocation= Part, frequency= Frequency, rebalancing= Rebalancing)
+        
         # 設置初始資金 & 手續費
         cerebro.broker.setcash(initial_Amount)
         cerebro.broker.setcommission(commission=0.001)
 
-        # 添加個股相關數據
-        data = bt.feeds.PandasData(dataname=yf.download(StockID, start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
-        cerebro.adddata(data)
-
         # 添加分析器
+        
         cerebro.addanalyzer(bt.analyzers.AnnualReturn, _name= 'annualreturn')
         cerebro.addanalyzer(bt.analyzers.Returns, _name= 'returns')
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name= 'sharpe_ratio')
@@ -318,9 +360,10 @@ if __name__ == '__main__':
         print(f"夏普比率: {round(sharpe_ratio['sharperatio'],2)}")
         print(f"最大回撤: {round(drawdown['max']['drawdown'],2)}")
         print('索蒂諾比率:', round(sortino_ratio['sortino_ratio'],2))
+        if Benhmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
 
 
-        Returndata['title']= results[0].title
+        Returndata['title']= "Portfolio"+str(i+1)
         Returndata['Portfolio']= results[0].Roi
         Returndata['FinalBalance']= results[0].FinalBalance
         Returndata['CAGR']= results[0].CAGR
@@ -332,6 +375,7 @@ if __name__ == '__main__':
         Returndata['Max.Drawdown']= round(drawdown['max']['drawdown'],2)
         Returndata['SharpeRatio']= round(sharpe_ratio['sharperatio'],2)
         Returndata['SortioRatio']= round(sortino_ratio['sortino_ratio'],2)
+        if Benhmark==1: Returndata['Benhmark']= round(results[0].Roi- TWII_results[0].Roi,3)
 
         #將股票回測結果貼上
         Returndict['ReturnData'].append(Returndata)
@@ -341,5 +385,5 @@ if __name__ == '__main__':
     #except: Returndict['Message']= 'Error'
 
     # 輸出結果 JSON 文件
-    with open('./backtest/output.json', 'w', encoding='utf-8') as json_file:
+    with open(output_path, 'w', encoding='utf-8') as json_file:
         json.dump(Returndict, json_file, ensure_ascii=False, indent=4)

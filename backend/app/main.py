@@ -9,6 +9,7 @@ import csv
 import os
 import json
 import pandas as pd
+import subprocess
 
 app = create_app()
 CORS(app)
@@ -52,10 +53,25 @@ def index_stocks():
 @app.route('/api/StrategyStock', methods=['POST'])
 def strategy_stock():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path  = os.path.join(current_dir, '../backtest/output.json')
-    with open(json_path, 'r', encoding='utf-8') as json_file:
-        data = json.load(json_file)
-    return jsonify(data)
+    input_path  = os.path.join(current_dir, '../backtest/buy_and_hold.json')
+    py_path     = os.path.join(current_dir, '../backtest/backtest.py')
+    output_path  = os.path.join(current_dir, '../backtest/output.json')
+
+    data = request.get_json()
+    with open(input_path, 'w') as f:
+        json.dump(data, f)
+
+    test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
+
+    if test_res.returncode != 0:
+        return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
+    
+    if os.path.exists(output_path):
+        with open(output_path, 'r') as f:
+            output = json.load(f)
+        return jsonify(output)
+    else:
+        return jsonify({'error': 'Output file not found'}), 500
 
 
 @app.route('/api/StockInformation', methods=['POST'])
