@@ -808,8 +808,8 @@
   </div>
 </template>
 <script>
-import 'vue-toastification/dist/index.css';
-import GoTop from '@inotom/vue-go-top';
+// import 'vue-toastification/dist/index.css';
+// import GoTop from '@inotom/vue-go-top';
 import VueApexCharts from 'vue-apexcharts';
 import axios from 'axios';
 export default {

@@ -14,7 +14,7 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import { seriesData } from '../data/stockPrice.js'
-import { DIF, MACD, DIF_MACD } from '../data/macd.js'
+import { var1, var2, var3 } from '../data/analysis.js'
 
 export default {
     components: {
@@ -57,23 +57,31 @@ export default {
                         offsetY: 150, // 在這裡設置頂部偏移量
                     },
                 },
+                plotOptions: {
+                    candlestick: {
+                        colors: {
+                        upward: '#EF403C',
+                        downward: '#00B746'
+                        }
+                    }
+                }
             },
             series2: [
                 {
                     name: "DIF",
-                    data: DIF,
+                    data: var1,
                     type: "line"
                 },
                 {
                     name: "MACD",
-                    data: MACD,
+                    data: var2,
                     type: "line",
                     color: '#FEB019'
                     
                 },
                 {
                     name: "DIF_MACD",
-                    data: DIF_MACD,
+                    data: var3,
                     type: 'column'
                 },
             ],

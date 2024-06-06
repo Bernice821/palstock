@@ -29,10 +29,10 @@
         <b-tab title='走勢圖'>
           <div style="margin-left:2%; width:50%">
             <select id="time-select" name="time" v-model="selectedTime">
-              <option disabled value='20' >一個月</option>
-              <option value='20' >一個月</option>
-              <option value='60' >三個月</option>
-              <option value='240' >一年</option>
+              <option disabled value='30' >一個月</option>
+              <option value='30' >一個月</option>
+              <option value='90' >三個月</option>
+              <option value='365' >一年</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedTime === 'custom'" style="margin-top:2%;">
@@ -44,18 +44,15 @@
               </b-form-group>
             </div>
           </div>
-
-          <div id='stock1' style="width:80%;">
-            <trend />
-          </div>
+          <div id='stock1' style="width:80%;"><trend /></div>
         </b-tab>
         <b-tab title='分析' lazy>
           <div style="margin-left: 2%;">
             <select id="period-select" name="period" v-model="selectedPeriod">
-              <option disabled value='5' >週線</option>
-              <option value='5' >週線</option>
-              <option value='20' >月線</option>
-              <option value='240' >年線</option>
+              <option disabled value='7' >週線</option>
+              <option value='7' >週線</option>
+              <option value='30' >月線</option>
+              <option value='365' >年線</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedPeriod === 'custom'" style="margin-top:2%; margin-bottom: 2%;">
@@ -112,10 +109,10 @@ export default {
       stockSymbol: '2330',
       queryType: 'symbol',
       queryTarget: '2330',
-      selectedTime: '20',
+      selectedTime: '30',
       StartDate_T: '',  
       EndDate_T: '',
-      selectedPeriod: '5',
+      selectedPeriod: '7',
       StartDate_P: '',  
       EndDate_P: '',
       selectedIndex:'KDJ',
@@ -221,26 +218,39 @@ export default {
       }
 
       try {
-        const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
-          queryType: this.queryType,
-          queryTarget: this.queryTarget,
-          StartDate_T: startDate_T,
-          EndDate_T: endDate_T,
-          StartDate_P: startDate_P,
-          EndDate_P: endDate_P,
-          selectedIndex: this.selectedIndex
-        });
+        if (this.queryType === 'symbol')
+        {
+          const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
+            StocksID : this.queryTarget,
+            StartDate_T: startDate_T,
+            EndDate_T: endDate_T,
+            StartDate_P: startDate_P,
+            EndDate_P: endDate_P,
+            selectedIndex: this.selectedIndex
+          });
+        }
+        else
+        {
+          const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
+            Stockstitle : this.queryTarget,
+            StartDate_T: startDate_T,
+            EndDate_T: endDate_T,
+            StartDate_P: startDate_P,
+            EndDate_P: endDate_P,
+            selectedIndex: this.selectedIndex
+          });
+        }
+     
         const data = response.data;
         const fs = require('fs');
-        const path = require('path');
 
         if (data.StatusCode === 200) {
           const returnData = data.ReturnData;
 
-          const stockName = returnData.stockName;
+          const stockName = returnData.Stockstitle;
           document.getElementById('stock-name').textContent = stockName;
 
-          const stockSymbol = returnData.stockSymbol;
+          const stockSymbol = returnData.StocksID;
           document.getElementById('stock-symbol').textContent = stockSymbol;
 
           // this.priceToday = 319.31;
@@ -248,28 +258,79 @@ export default {
           this.priceToday = returnData.priceToday;
           this.priceYesterday = returnData.priceYesterday;
           this.changeColor();
-          const stockPriceFilePath = path.join(__dirname, 'data', 'stockPrice.js');
-          const stockPriceFileContent = `const stockPriceData = ${JSON.stringify(returnData.stockPrice, null, 2)};\nexport default stockPriceData;`;
 
-          fs.writeFile(stockPriceFilePath, stockPriceFileContent, 'utf8', (err) => {
+          // 寫入 StockPrice 到 stockPrice.js
+          const stockPrices = returnData.StockPrice;
+          const fileContent1 = `const seriesData = ${JSON.stringify(stockPrices, null, 2)};\n\nexport default seriesData;\n`;
+          fs.writeFile('./data/stockPrice.js', fileContent1, 'utf8', (err) => {
             if (err) {
-              console.error('Error writing stockPrice data to file:', err);
+              console.error('Error writing stockPrices:', err);
             } else {
-              console.log('Stock price data successfully written to ./data/stockPrice.js');
+              console.log('Data fetched and saved to ./data/stockPrice.js');
             }
           });
 
           // 寫入 volume 到 volume.js
-          const volumeFilePath = path.join(__dirname, 'data', 'volume.js');
-          const volumeFileContent = `const VolData = ${JSON.stringify(returnData.volume, null, 2)};\nexport default VolData;`;
-
-          fs.writeFile(volumeFilePath, volumeFileContent, 'utf8', (err) => {
+          const volume = returnData.Volume;
+          const fileContent2 = `const VolData = ${JSON.stringify(volume, null, 2)};\n\nexport default VolData;\n`;
+          fs.writeFile('./data/volume.js', fileContent2, 'utf8', (err) => {
             if (err) {
-              console.error('Error writing volume data to file:', err);
+              console.error('Error writing volume:', err);
             } else {
-              console.log('Volume data successfully written to ./data/Volume.js');
+              console.log('Data fetched and saved to ./data/volume.js');
             }
-          })
+          });
+
+          let var1, var2, var3;
+          let filePath;
+          switch (this.selectedIndex) {
+            case 'KDJ':
+              var1 = returnData.k;
+              var2 = returnData.d;
+              var3 = returnData.j;
+              filePath = './data/kdj.js';
+              break;
+            case 'MACD':
+              var1 = returnData.dif;
+              var2 = returnData.macd;
+              var3 = returnData.dif_macd;
+              filePath = './data/macd.js';
+              break;
+            case 'RSI':
+              var1 = returnData.rsi6;
+              var2 = returnData.rsi12;
+              var3 = returnData.rsi24;
+              filePath = './data/rsi.js';
+              break;
+            default:
+              console.error('Unknown selectedIndex:', this.selectedIndex);
+          }
+          const fileContent_1 = `export const var1 = ${JSON.stringify(var1, null, 2)};\n\n`;
+          fs.writeFile(filePath, fileContent_1, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing var1:', err);
+            } else {
+              console.log('Successfully writing var1');
+            }
+          });
+
+          const fileContent_2 = `export const var2 = ${JSON.stringify(var2, null, 2)};\n\n`;
+          fs.appendFile(filePath, fileContent_2, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing var2:', err);
+            } else {
+              console.log('Successfully writing var2');
+            }
+          });
+
+          const fileContent_3 = `export const var3 = ${JSON.stringify(var3, null, 2)};\n\n`;
+          fs.appendFile(filePath, fileContent_3, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing var3:', err);
+            } else {
+              console.log('Successfully writing var3');
+            }
+          });
         }
         // console.log('queryType:', this.queryType);
         // console.log('queryTarget:', this.queryTarget);
