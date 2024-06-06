@@ -30,9 +30,10 @@ def index_stocks():
     req        = request.get_json()
     stocks_num = req['StocksNum']
     stock_ids  = req['StocksID']
-    time_str   = req['time'] + " 23:59:59" #當天亦可包含至query結果內
+    time_str   = req['time'] #當天亦可包含至query結果內
 
     target_time = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
+    target_time = target_time.replace(hour=23, minute=59, second=59)
     start_time  = target_time - timedelta(7)
 
     stocks = []
@@ -44,6 +45,7 @@ def index_stocks():
             stock['StocksTitle'] = data.name
             stock['StocksChart'].append(data.close)
         stocks.append(stock)
+    print(stocks)
     return jsonify(stocks)
 
 
