@@ -1,42 +1,48 @@
 from seleniumbase import Driver
 from selenium.webdriver.common.by import By
-import openpyxl
+from datetime import datetime
+import csv
+import os
 
-
-#設定excel
-workbook= openpyxl.Workbook()
-workpage= workbook.create_sheet("List1",0)
-workpage.cell(1,1).value= "指標名稱"
-workpage.cell(1,2).value= "開盤"
-workpage.cell(1,3).value= "最高"
-workpage.cell(1,4).value= "最低"
-workpage.cell(1,5).value= "收盤"
-workpage.cell(1,6).value= "成交量(億)"
-
-#建立dict存取資訊
-imfor= dict()
-
-#建立變數
-driver= Driver(uc= True, incognito= False, headless= True)
-tiles_set= {"開盤","最高","最低","昨收","成交量(億)"}
-urls= [
+# 建立變數
+driver = Driver(uc=True, incognito=False, headless=True)
+tiles_set = {"開盤", "最高", "最低", "昨收", "成交量(億)"}
+urls = [
     'https://www.wantgoo.com/index/0000',
     'https://www.wantgoo.com/global/dji'
 ]
-row, col= 2, 1
+
+# 準備 CSV 檔案
+cur_time = datetime.now()
+cur_dir  = os.path.dirname(os.path.abspath(__file__))
+file_name = f'figures_data_{cur_time.year}_{cur_time.month}_{cur_time.day}.csv'
+file_path = os.path.join(cur_dir, 'figures_datas', file_name)
+
+csv_file = open(file_path, mode='w', newline='', encoding='utf-8')
+csv_writer = csv.writer(csv_file)
+
+# 寫入標題列
+csv_writer.writerow(["指標名稱", "開盤", "最高", "最低", "收盤", "成交量(億)"])
 
 for url in urls:
     driver.get(url)
-    workpage.cell(row, 1).value= driver.find_element(By.CSS_SELECTOR,"#investrue-info-1 > h3").text
-    figures= driver.find_elements(By.CSS_SELECTOR,"body > div.page-wrap > main > div > div.quotes-wrap > div.quotes-info > div.lasty-detail > ul > li")
-    col= 2
+    row_data = [driver.find_element(By.CSS_SELECTOR, "#investrue-info-1 > h3").text]
+    figures = driver.find_elements(By.CSS_SELECTOR, "body > div.page-wrap > main > div > div.quotes-wrap > div.quotes-info > div.lasty-detail > ul > li")
+    
     for figure in figures:
-        key= figure.find_element(By.CSS_SELECTOR,"i").text
-        val= figure.find_element(By.CSS_SELECTOR,"span").text  
+        key = figure.find_element(By.CSS_SELECTOR, "i").text
+        val = figure.find_element(By.CSS_SELECTOR, "span").text  
         if key in tiles_set: 
-            workpage.cell(row, col).value= val
-            col+= 1
-    row+= 1
+            row_data.append(val)
+    
+    # 檢查並補齊缺失的資料
+    while len(row_data) < 6:
+        row_data.append("")
+    
+    csv_writer.writerow(row_data)
 
+# 關閉 CSV 文件
+csv_file.close()
 
-workbook.save("./figures.xlsx")
+# 關閉瀏覽器
+driver.quit()
