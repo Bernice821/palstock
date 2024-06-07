@@ -35,6 +35,7 @@ def market_page():
     end_dj  = req['EndDate_DJ']
 
     
+    
 
 @app.route('/api/indexStocks', methods=['POST'])
 def index_stocks():

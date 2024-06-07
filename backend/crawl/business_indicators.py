@@ -1,9 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.edge.service import Service
-import time
+from datetime import datetime
+import os
 import csv
 
 PATH = './crawl/driver/edgedriver_mac64_m1/msedgedriver'
@@ -39,7 +38,13 @@ fieldnames = set()
 for item in indicators:
     fieldnames.update(item.keys())
 
-with open('./crawl/indicators.csv', 'w') as file:
+cur_dir   = os.path.dirname(os.path.abspath(__file__))
+cur_time  = datetime.now()
+file_name = f'indicators_datas_{cur_time.year}_{cur_time.month}_{cur_time.day}.csv'
+file_path = os.path.join(cur_dir, 'indicators_datas', file_name)
+
+
+with open(file_path, 'w') as file:
     writer = csv.DictWriter(file, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(indicators)
