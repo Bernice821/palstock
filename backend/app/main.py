@@ -84,8 +84,8 @@ def stock_information():
     
     start_T = datetime.strptime(req['StartDate_T'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")  #當天亦可包含至query結果內
     end_T = datetime.strptime(req['EndDate_T'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")  
-    start_P = req['StartDate_P'] + " 00:00:00"
-    end_P = req['EndDate_P'] + " 23:59:59"
+    start_P = datetime.strptime(req['StartDate_P'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")
+    end_P = datetime.strptime(req['EndDate_P'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")
     index = req['selectedIndex']
 
 
@@ -105,7 +105,7 @@ def stock_information():
     yesterday_price = latest_datas[1].close
     stock = {}
 
-    
+
 
     stock['StockPrice'] = []
     stock['Volume'] = []
@@ -130,21 +130,25 @@ def stock_information():
     data_lst = [
         data.obj_to_dict() for data in P_datas
     ]
-
-
     
     P_df = pd.DataFrame(data_lst)
     calculate_indicators(P_df)
     
-    stock['k'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['K'].to_list())]
-    stock['d'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['D'].to_list())]
-    stock['j'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['J'].to_list())]
-    stock['dif'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF'].to_list())]
-    stock['macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['MACD'].to_list())]
-    stock['dif-macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF-MACD'].to_list())]
-    stock['rsi6'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI6'].to_list())]
-    stock['rsi12'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI12'].to_list())]
-    stock['rsi24'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI24'].to_list())]
+    stk_key = ['k', 'd', 'j', 'dif', 'macd', 'dif-macd', 'rsi6', 'rsi12', 'rsi24']
+
+    for key in stk_key:
+        stock[key] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df[key.upper()].to_list())]
+
+
+    # stock['k'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['K'].to_list())]
+    # stock['d'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['D'].to_list())]
+    # stock['j'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['J'].to_list())]
+    # stock['dif'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF'].to_list())]
+    # stock['macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['MACD'].to_list())]
+    # stock['dif-macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF-MACD'].to_list())]
+    # stock['rsi6'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI6'].to_list())]
+    # stock['rsi12'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI12'].to_list())]
+    # stock['rsi24'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI24'].to_list())]
     return jsonify(stock)
 
 
