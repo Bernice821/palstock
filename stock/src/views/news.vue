@@ -7,7 +7,7 @@
         <b-row cols="1" cols-md="2" cols-xl="3">
           <b-col v-for="news in getRecentNews">
             <a v-bind:href="news.Url">
-              <div class="news">
+              <div class="news img-on-top">
                 <img class="news-img" v-bind:src="news.ImgUrl">
                 <div class="news-content">
                   <h5 class="news-title" v-bind:title="news.Title">{{news.Title}}</h5>
@@ -247,18 +247,19 @@ a {
 .news {
   --img-width: 8rem;
   --img-height: 6rem;
+  --news-height: 6rem;
   position: relative;
   margin-bottom: 0.5rem;
   /*border: 1px solid #888888;*/
   border-radius: 3px;
-  height: var(--img-height);
+  height: var(--news-height);
   transition-duration: 0.5s;
   * {
   text-align: left;
   }
   &:hover {
     /*z-index: 2,*/
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 }
 
@@ -275,6 +276,18 @@ a {
 .news-content {
   margin-left: var(--img-width);
   padding: 0.25rem;
+}
+
+.news.img-on-top {
+  --img-width: 100%;
+  --img-height: 15rem;
+  --news-height: calc(var(--img-height) + 6rem);
+  .news-img {
+    position: relative;
+  }
+  .news-content {
+    margin-left: 0;
+  }
 }
 
 .news-title {
