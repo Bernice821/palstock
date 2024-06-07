@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies (frontend)
+      working-directory: ./stock
+      run: npm install --force
+
+    - name: Build frontend
+      working-directory: ./stock
+      run: npm run build
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies (backend)
+      working-directory: ./stock
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        # pip install -r requirements.txt
+
+    - name: Run backend tests
+      # working-directory: ./backend
+      run: |
+        # source venv/bin/activate
+        # pytest
+        echo "test"  # 暂时的占位符，替换为实际的测试命令
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.PUB1_KEY }}
+        publish_dir: ./stock/dist
+
+    # 如果需要部署后端，可以在这里添加部署脚本，例如部署到Heroku，AWS，或其他服务
+    # - name: Deploy backend
+    #   run: ./backend/deploy.sh

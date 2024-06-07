@@ -6,27 +6,12 @@
         <b-tab title="台股">
           <h3 class="text-xl font-bold text-left py-2" style="color:#1B3C73">近期熱銷</h3>
           <div class="row">
-            <div class="col">
-              <div class="card1" style="color:#1B3C73;text-align: left;font-size: 18px;font-weight: 600;">小資族首選-0050
-                <h3 class="text-3xl font-bold text-left py-2" style="color:#D24545">+0.57%</h3>
+            <div v-for="(stock, index) in stocks" :key="index" class="col">
+              <div class="card1" :style="{ color: '#1B3C73', textAlign: 'left', fontSize: '18px', fontWeight: '600' }">
+                {{ stock.name }}
+                <h3 class="text-3xl font-bold text-left py-2" :style="{ color: '#D24545' }">{{ stock.change }}</h3>
                 <div>
-                  <apexchart width="270" type="area" :options="chartOptions" :series="chartSeries"></apexchart>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card1" style="color:#1B3C73;text-align: left;font-size: 18px;font-weight: 600;">小蝦米跟大鯨魚
-                <h3 class="text-3xl font-bold text-left py-2" style="color:#D24545">+0.17%</h3>
-                <div>
-                  <apexchart width="270" type="area" :options="chartOptions1" :series="chartSeries1"></apexchart>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="card1" style="color:#1B3C73;text-align: left;font-size: 18px;font-weight: 600;">小資族首選
-                <h3 class="text-3xl font-bold text-left py-2" style="color:#D24545">+9.32%</h3>
-                <div>
-                  <apexchart width="270" type="area" :options="chartOptions2" :series="chartSeries2"></apexchart>
+                  <apexchart :width="270" type="area" :options="chartOptions" :series="[stock.StocksChart]"></apexchart>
                 </div>
               </div>
             </div>
@@ -814,57 +799,22 @@ import VueApexCharts from 'vue-apexcharts';
 import axios from 'axios';
 export default {
   components: {
-    GoTop,
+    // GoTop,
     apexchart: VueApexCharts,
     timestamp: ""
   },
   data() {
     return {
+      stocks: [],
       chartOptions: {
         chart: {
-          id: 'vuechart-example',
+          type: 'area',
         },
         xaxis: {
-          categories: [8, 9, 10, 11, 12, 13],
+          categories: []
         },
-        colors: ['#0E46A3'],
+        // 其他圖表配置選項
       },
-      chartSeries: [
-        {
-          name: 'Vue Chart',
-          data: [155.95, 155.61, 156.92, 156.93, 157.01, 156.85]
-        }
-      ],
-      chartOptions1: {
-        chart: {
-          id: 'vuechart-example',
-        },
-        xaxis: {
-          categories: [8, 9, 10, 11, 12, 13],
-        },
-        colors: ['#0E46A3'],
-      },
-      chartSeries1: [
-        {
-          name: 'Vue Chart',
-          data: [155.95, 155.61, 156.92, 156.93, 157.01, 156.85]
-        }
-      ],
-      chartOptions2: {
-        chart: {
-          id: 'vuechart-example',
-        },
-        xaxis: {
-          categories: [8, 9, 10, 11, 12, 13],
-        },
-        colors: ['#0E46A3'],
-      },
-      chartSeries2: [
-        {
-          name: 'Vue Chart',
-          data: [155.95, 155.61, 156.92, 156.93, 157.01, 156.85]
-        }
-      ],
       compatConfig: { MODE: 3 }
     };
   }, created() {
@@ -880,9 +830,11 @@ export default {
           time: this.timestamp
         });
         const data = response.data;
-        const stocks = data.stocks.map((stocks) => ({
+        this.stocks = data.stocks.map(stock => ({
+          StocksChart: stock.StocksChart,
+          name: stock.name,
+          change: stock.change
         }));
-        this.stocks = stocks;
       } catch (error) {
         console.error('Error fetching index:', error);
       }
