@@ -25,6 +25,16 @@ def news_stock():
         news.append(n.obj_to_dict())
     return jsonify(news)
 
+@app.route('/api/Market', methods=['POST'])
+def market_page():
+    req = request.get_json()
+
+    start_tw = req['StartDate_Taiwan']
+    end_tw = req['EndDate_Taiwan']
+    start_dj = req['StartDate_DJ']
+    end_dj  = req['EndDate_DJ']
+
+    
 
 @app.route('/api/indexStocks', methods=['POST'])
 def index_stocks():
