@@ -14,7 +14,7 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import { seriesData } from '../data/stockPrice.js'
-import { rsi6, rsi12, rsi24 } from '../data/rsi.js'
+import { var1, var2, var3 } from '../data/analysis.js'
 
 export default {
     components: {
@@ -46,19 +46,27 @@ export default {
                         offsetY: 150, // 在這裡設置頂部偏移量
                     },
                 },
+                plotOptions: {
+                    candlestick: {
+                        colors: {
+                        upward: '#EF403C',
+                        downward: '#00B746'
+                        }
+                    }
+                }
             },
             series2: [
                 {
                     name: "RSI6",
-                    data: rsi6
+                    data: var1
                 },
                 {
                     name: "RSI12",
-                    data: rsi12
+                    data: var2
                 },
                 {
                     name: "RSI24",
-                    data: rsi24
+                    data: var3
                 },
             ],
             chartOptions2: {

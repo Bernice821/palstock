@@ -2,37 +2,6 @@
   <div>
     <h3 class="text-2xl font-bold text-left py-2" style="color:#1B3C73;text-align:left">大盤市況</h3>
     <div class="row">
-      <div class="col-6">
-        <div class="card2">
-          <h1 style="margin:2%;font-size: 24px;color:black;font-weight: 600;text-align:left">大盤總分</h1>
-          <ul class="chart-skills">
-            <li>
-              <span></span>
-            </li>
-            <li>
-              <span></span>
-            </li>
-            <li>
-              <span></span>
-            </li>
-            <li>
-              <span></span>
-            </li>
-            <h1 style="text-align:center;font-size:40px;margin-top:30%">8/10</h1>
-          </ul>
-
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="card2" style="width:100%">
-          <h1 style="margin:2%;font-size: 24px;color:black;font-weight: 600;text-align:left">大盤總分歷史</h1>
-          <div>
-            <apexchart width="90%" type="area" :options="chartOptions" :series="seriesMarket"></apexchart>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
       <div class="col">
         <div class="card2">
           <h1 style="margin:2%;font-size: 24px;color:black;font-weight: 600;text-align:left">景氣燈號總分</h1>
@@ -49,9 +18,8 @@
             <li>
               <span></span>
             </li>
-            <h1 style="text-align:center;font-size:40px;margin-top:30%">37/45</h1>
+            <h1 style="text-align:center;font-size:40px;margin-top:30%">{{ Indicators }}/45</h1>
           </ul>
-
         </div>
       </div>
       <div class="col-6">
@@ -66,98 +34,106 @@
 
     <div id="TW index" class="stock-info" style="width:100%; margin-top: 5%;">
       <span class="stock-name">
-        <span> 台灣加權指數 </span>
+        <span id="stock-name" style="margin-right: 10px;">台灣加權指數</span>
+        <span id="stock-symbol">TWII</span>
       </span>
-      <span class="current-price" style="margin-left: 15px;">237.23</span>
-      <span class="change">+ 5.34</span>
-      <span class="change"> (0.03%)</span>
+      <span class="current-price">
+        <span id="price-today" style="font-size: 48px;">{{ TaiwanPriceToday }}</span>
+        <span id="price-change" style="margin-left: 10px;">{{ priceChange(TaiwanPriceToday, TaiwanPriceYesterday) }}</span>
+        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(TaiwanPriceToday, TaiwanPriceYesterday), TaiwanPriceYesterday) }}%)</span>
+      </span>
     </div>
-
     <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
         <div style="margin-left:2%; width:50%">
-            <select id="time-select-Taiwan" name="time" v-model="selectedTime_Taiwan">
-              <option disabled value="one_month" p>一個月</option>
-              <option value="one_month">一個月</option>
-              <option value="three_months">三個月</option>
-              <option value="one_year">一年</option>
-              <option value="custom">自選</option>
-            </select>
-            <div v-if="selectedTime_Taiwan === 'custom'" style="margin-top:2%;">
-              <b-form-group label="開始日期">
-                <b-form-input type="date" v-model="customStartDate_Taiwan"></b-form-input>
-              </b-form-group>
-              <b-form-group label="結束日期">
-                <b-form-input type="date" v-model="customEndDate_Taiwan"></b-form-input>
-              </b-form-group>
-            </div>
+          <select id="time-select" name="time" v-model="selectedTime_Taiwan">
+            <option disabled value='30' >一個月</option>
+            <option value='30' >一個月</option>
+            <option value='90' >三個月</option>
+            <option value='365' >一年</option>
+            <option value="custom">自選</option>
+          </select>
+          <div v-if="selectedTime_Taiwan === 'custom'" style="margin-top:2%;">
+            <b-form-group label="開始日期">
+              <b-form-input type="date" v-model="StartDate_Taiwan"></b-form-input>
+            </b-form-group>
+            <b-form-group label="結束日期">
+              <b-form-input type="date" v-model="EndDate_Taiwan"></b-form-input>
+            </b-form-group>
           </div>
+        </div>  
       </div>
-      <div id='stock1' style="width:80%;"><trend/></div>
-
+      <div id='stock1' style="width:80%;">
+        <trend />
+      </div>
     </div>
 
-    <div id="DJ index" class="stock-info" style="width:100%; margin-top: 10%;">
+    <div id="DJ index" class="stock-info" style="width:100%; margin-top: 5%;">
       <span class="stock-name">
-        <span> 道瓊工業指數 </span>
+        <span style="margin-right: 10px;">道瓊工業指數</span>
+        <span>DJI</span>
       </span>
-      <span class="current-price" style="margin-left: 15px;">237.23</span>
-      <span class="change">+ 5.34</span>
-      <span class="change"> (0.03%)</span>
+      <span class="current-price">
+        <span id="price-today" style="font-size: 48px;">{{ DJPriceToday }}</span>
+        <span id="price-change" style="margin-left: 10px;">{{ priceChange(DJPriceToday, DJPriceYesterday) }}</span>
+        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(DJPriceToday, DJPriceYesterday), DJPriceYesterday) }}%)</span>
+      </span>
     </div>
-
     <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
         <div style="margin-left:2%; width:50%">
-            <select id="time-select-DJ" name="time" v-model="selectedTime_DJ">
-              <option disabled value="one_month" p>一個月</option>
-              <option value="one_month">一個月</option>
-              <option value="three_months">三個月</option>
-              <option value="one_year">一年</option>
-              <option value="custom">自選</option>
-            </select>
-            <div v-if="selectedTime_DJ === 'custom'" style="margin-top:2%;">
-              <b-form-group label="開始日期">
-                <b-form-input type="date" v-model="customStartDate_DJ"></b-form-input>
-              </b-form-group>
-              <b-form-group label="結束日期">
-                <b-form-input type="date" v-model="customEndDate_DJ"></b-form-input>
-              </b-form-group>
-            </div>
+          <select name="time" v-model="selectedTime_DJ">
+            <option disabled value='30' >一個月</option>
+            <option value='30' >一個月</option>
+            <option value='90' >三個月</option>
+            <option value='365' >一年</option>
+            <option value="custom">自選</option>
+          </select>
+          <div v-if="selectedTime_DJ === 'custom'" style="margin-top:2%;">
+            <b-form-group label="開始日期">
+              <b-form-input type="date" v-model="StartDate_DJ"></b-form-input>
+            </b-form-group>
+            <b-form-group label="結束日期">
+              <b-form-input type="date" v-model="EndDate_DJ"></b-form-input>
+            </b-form-group>
           </div>
+        </div>  
       </div>
-      <div id='stock3' style="width:80%;"><trend/></div>
+      <div id='stock1' style="width:80%;">
+        <DJtrend/>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import trend from './graph/trend.vue'
-import Volume from './graph/Volume.vue'
+import DJtrend from './graph/DJtrend.vue'
 import { seriesData } from './data/stockPrice.js'
-
 
 export default {
   components: {
     apexchart: VueApexCharts,
     trend,
-    Volume
+    DJtrend
   },
   data () {
     return {
-      selectedTime_Taiwan: 'one_month',
-      customStartDate_Taiwan: '',  
-      customEndDate_Taiwan: '',
-      selectedTime_DJ: 'one_month',
-      customStartDate_DJ: '',  
-      customEndDate_DJ: '',
-      seriesMarket: [{ 
-        name: 'score',
-        data: seriesData 
-      }],
+      TaiwanPriceToday: 123.23,
+      TaiwanPriceYesterday: 134.12,
+      DJPriceToday: 379.29,
+      DJPriceYesterday:365.23,
+      StartDate_Taiwan: '',  
+      EndDate_Taiwan: '',
+      StartDate_DJ: '',  
+      EndDate_DJ: '',
+      Indicators: 32,
+      IndicatorsHistory: '',
+      selectedTime_Taiwan: '30',
+      selectedTime_DJ: '30',
       seriesIndicator: [{ 
         name: 'score',
-        data: seriesData 
+        data: this.IndicatorsHistory
       }],
       chartOptions: {
         chart: {
@@ -188,6 +164,182 @@ export default {
         },
       },
     }
+  },
+  watch: {
+    selectedTime_DJ: {
+      handler: 'fetchInfo', // 調用 fetchInfo 函數
+      immediate: true // 立即調用一次，以處理初始選擇
+    },
+    selectedTime_Taiwan: {
+      handler: 'fetchInfo', // 調用 fetchInfo 函數
+      immediate: true // 立即調用一次，以處理初始選擇
+    },
+    StartDate_Taiwan: {
+      handler: 'checkBothDate_Taiwan' 
+    },
+    EndDate_Taiwan: {
+      handler: 'checkBothDate_Taiwan' 
+    },
+    StartDate_DJ: {
+      handler: 'checkBothDate_DJ' 
+    },
+    EndDate_DJ: {
+      handler: 'checkBothDate_DJ' 
+    }
+  },
+  methods: {
+    async checkBothDate_Taiwan() {
+      // 確保 StartDate_P 和 EndDate_P 都已經設置
+      if (this.StartDate_Taiwan && this.EndDate_Taiwan) {
+        // 都已經設置，可以調用 fetchInfo 函數
+        await this.fetchInfo();
+      } else {
+        // 如果其中一個日期未設置，則不執行任何操作
+        console.log('Both StartDate_Taiwan and EndDate_Taiwan must be set.');
+      }
+    },
+    async checkBothDate_DJ() {
+      // 確保 StartDate_P 和 EndDate_P 都已經設置
+      if (this.StartDate_DJ && this.EndDate_DJ) {
+        // 都已經設置，可以調用 fetchInfo 函數
+        await this.fetchInfo();
+      } else {
+        // 如果其中一個日期未設置，則不執行任何操作
+        console.log('Both StartDate_DJ and EndDate_DJ must be set.');
+      }
+    },
+    async fetchInfo(){
+      let startDate_T = this.StartDate_Taiwan;
+      let endDate_T = this.EndDate_Taiwan;
+      let startDate_P = this.StartDate_DJ;
+      let endDate_P = this.EndDate_DJ;
+
+      if (this.selectedTime_Taiwan !== "custom") {
+        let today = new Date();
+        let selectedDays = parseInt(this.selectedTime_Taiwan);
+        let pastDate = new Date(today);
+        pastDate.setDate(today.getDate() - selectedDays);       
+        startDate_T = pastDate.toISOString().split('T')[0];
+        endDate_T = today.toISOString().split('T')[0];
+        if (!isNaN(pastDate.getTime())) {
+          startDate_T = pastDate.toISOString().split('T')[0];
+          endDate_T = today.toISOString().split('T')[0];
+        } else {
+          console.error('Invalid date:', pastDate);
+        }
+      }
+      if (this.selectedTime_DJ !== "custom") {
+        let today = new Date();
+        let selectedDays = parseInt(this.selectedTime_DJ);
+        let pastDate = new Date(today);
+        pastDate.setDate(today.getDate() - selectedDays);  
+        if (!isNaN(pastDate.getTime())) {
+          startDate_P = pastDate.toISOString().split('T')[0];
+          endDate_P = today.toISOString().split('T')[0];
+        } else {
+          console.error('Invalid date:', pastDate);
+        }
+      }
+
+      try {
+        const response = await axios.post('http://127.0.0.1:12000/api/Market', {
+          StartDate_Taiwan: startDate_T,
+          EndDate_Taiwan: endDate_T,
+          StartDate_DJ: startDate_P,
+          EndDate_DJ: endDate_P
+        });       
+     
+        const data = response.data;
+        const fs = require('fs');
+
+        if (data.StatusCode === 200) {
+          this.TaiwanpriceToday = returnData.TaiwanpriceToday;
+          this.TaiwanpriceYesterday = returnData.TaiwanpriceYesterday;
+
+          this.DJpriceToday = returnData.DJpriceToday;
+          this.DJpriceYesterday = returnData.DJpriceYesterday;
+          this.changeColor();
+
+          this.Indicators = returnData.Indicators;
+          this.IndicatorsHistory = returnData.IndicatorsHistory;
+
+          // 寫入 StockPrice 到 stockPrice.js
+          const TaiwanstockPrices = returnData.TaiwanStocksChart;
+          const fileContent1 = `const seriesData = ${JSON.stringify(TaiwanstockPrices, null, 2)};\n\nexport default seriesData;\n`;
+          fs.writeFile('./data/stockPrice.js', fileContent1, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing stockPrices:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/stockPrice.js');
+            }
+          });
+
+          // 寫入 volume 到 volume.js
+          const volume = returnData.TaiwanVolume;
+          const fileContent2 = `const VolData = ${JSON.stringify(volume, null, 2)};\n\nexport default VolData;\n`;
+          fs.writeFile('./data/volume.js', fileContent2, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing volume:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/volume.js');
+            }
+          });
+
+          // 寫入 DJStockPrice 到 DJstockPrice.js
+          const DJPrices = returnData.DJStocksChart;
+          const fileContent3 = `const seriesData = ${JSON.stringify(DJPrices, null, 2)};\n\nexport default seriesData;\n`;
+          fs.writeFile('./data/DJstockPrice.js', fileContent3, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing DJstockPrices:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/DJstockPrice.js');
+            }
+          });
+          console.log('queryType:', this.StartDate_DJ);
+        console.log('queryTarget:', this.EndDate_DJ);
+        console.log('priceToday:', this.StartDate_Taiwan)   
+        }
+      } catch (error) {
+        console.error('Error fetching index:', error);
+      }
+    },
+    changeColor() {
+      const elm1 = document.querySelectorAll("#price-change");
+      const elm2 = document.querySelectorAll("#price-change-percent");
+      const elm3 = document.querySelectorAll("#price-today");
+      let Change;
+      for(var i=0; i<elm1.length; i++){
+        if(i==0){
+          Change = this.priceChange(this.TaiwanPriceToday, this.TaiwanPriceYesterday);
+        }
+        else{
+          Change = this.priceChange(this.DJPriceToday, this.DJPriceYesterday);
+        }
+        if(Change > 0){       
+          elm1[i].style.color = '#EF403C';
+          elm1[i].textContent = `▲${Change}`;
+          elm2[i].style.color = '#EF403C';
+          elm3[i].style.color = '#EF403C';
+        }else if (Change < 0) {
+          elm1[i].style.color = '#00B746';       
+          elm2[i].style.color = '#00B746';
+          elm3[i].style.color = '#00B746';
+          let noMinus = Math.abs(Change);
+          elm1[i].textContent = `▼${noMinus}`;
+        }
+      }
+    },
+    priceChange(priceToday, priceYesterday) {
+      return (priceToday - priceYesterday).toFixed(2);
+    },
+    priceChangePercent(priceChange, priceYesterday)
+    {
+      return ((priceChange/priceYesterday)*100).toFixed(2);
+    }
+  },
+  mounted() {
+    this.fetchInfo();
+    this.changeColor();
   }
 }
 </script>
@@ -386,14 +538,11 @@ export default {
 }
 
 .current-price {
-    font-size: 48px;
+    font-size: 24px;
     font-weight: bold;
-    margin-right: 10px;
-}
-
-.change {
-    font-size: 20px;
-    color: #D24545; /*或者是red，根据涨跌情况设置颜色*/
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .stock-name {

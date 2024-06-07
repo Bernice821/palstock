@@ -14,7 +14,7 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import { seriesData } from '../data/stockPrice.js'
-import { k, d, j } from '../data/kdj.js'
+import { var1, var2, var3 } from '../data/analysis.js'
 
 export default {
     components: {
@@ -46,19 +46,27 @@ export default {
                         offsetY: 150, // 在這裡設置頂部偏移量
                     },
                 },
+                plotOptions: {
+                    candlestick: {
+                        colors: {
+                        upward: '#EF403C',
+                        downward: '#00B746'
+                        }
+                    }
+                }
             },
             series2: [
                 {
                     name: "K",
-                    data: k
+                    data: var1
                 },
                 {
                     name: "D",
-                    data: d
+                    data: var2
                 },
                 {
                     name: "J",
-                    data: j
+                    data: var3
                 },
             ],
             chartOptions2: {
