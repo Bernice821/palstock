@@ -63,3 +63,8 @@ class Figure(db.Model):
     highest: Mapped[float] = mapped_column()
     lowest: Mapped[float] = mapped_column()
     close: Mapped[float] = mapped_column()
+
+class Indicator(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    time_stamp: Mapped[datetime] = mapped_column(default=lambda: datetime.now(), primary_key=True)
+    score: Mapped[int] = mapped_column()

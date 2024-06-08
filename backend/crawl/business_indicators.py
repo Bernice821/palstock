@@ -32,7 +32,6 @@ def crawl(url):
 
 
 crawl(url)
-print(indicators)
 
 fieldnames = set()
 for item in indicators:
