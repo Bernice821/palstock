@@ -14,6 +14,8 @@ import subprocess
 app = create_app()
 CORS(app)
 
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+
 @app.route('/api/newsStocks',methods=['POST'])
 def news_stock():
     # insert_news()
@@ -63,10 +65,9 @@ def index_stocks():
 
 @app.route('/api/StrategyStock', methods=['POST'])
 def strategy_stock():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    input_path  = os.path.join(current_dir, '../backtest/buy_and_hold.json')
-    py_path     = os.path.join(current_dir, '../backtest/backtest.py')
-    output_path  = os.path.join(current_dir, '../backtest/output.json')
+    input_path  = os.path.join(cur_dir, '../backtest/buy_and_hold.json')
+    py_path     = os.path.join(cur_dir, '../backtest/backtest.py')
+    output_path  = os.path.join(cur_dir, '../backtest/output.json')
 
     data = request.get_json()
     with open(input_path, 'w') as f:
@@ -150,19 +151,7 @@ def stock_information():
     for key in stk_key:
         stock[key] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df[key.upper()].to_list())]
 
-
-    # stock['k'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['K'].to_list())]
-    # stock['d'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['D'].to_list())]
-    # stock['j'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['J'].to_list())]
-    # stock['dif'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF'].to_list())]
-    # stock['macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['MACD'].to_list())]
-    # stock['dif-macd'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['DIF-MACD'].to_list())]
-    # stock['rsi6'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI6'].to_list())]
-    # stock['rsi12'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI12'].to_list())]
-    # stock['rsi24'] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df['RSI24'].to_list())]
     return jsonify(stock)
-
-
 
 
     
@@ -171,15 +160,22 @@ def index():
     return render_template('home.html')
 
 
-@app.route('/news')
-def show_news():
-    insert_news()
-    news = db.session.execute(db.select(New).order_by(New.time_stamp.desc())).scalars()
-    # news = db.session.execute(select(New).order_by(func.random())).first() #隨機挑選新聞
-    return render_template('list_news.html', news=news)
+
+@app.route('/db/GetAndInsertNews')
+def get_news():
+    crawler_path  = os.path.join(cur_dir, '../crawl/news_with_pic.py')
+    res           = subprocess.run(['python3', crawler_path], text=True)
+    
+    if res.returncode != 0:
+        return jsonify({'Error': 'Crwaler failed', 'Details':res.stderr}), 500
+    
+    return insert_news()
+
 
 def insert_news():
-    with open('./crawl/news.csv', 'r') as file:
+    cur_time      = datetime.now()
+    output_path   = os.path.join(cur_dir, f'../crawl/news_datas/news_{cur_time.year}_{cur_time.month}_{cur_time.day}.csv')
+    with open(output_path, 'r') as file:
         reader = csv.DictReader(file)
         news = []
         for new in reader:
@@ -189,21 +185,23 @@ def insert_news():
         db.session.add(new)
     db.session.commit()
 
-def delete_news():
-    news = db.session.execute(db.select(New)).scalars()
-    for n in news:
-        db.session.delete(n)
-    db.session.commit()
+    return jsonify({'Success': 'News inserted!'}), 200
 
-@app.route('/stocks')
-def show_stocks():
-    insert_stocks()
-    stocks = db.session.execute(db.select(Stock)).scalars()
-    # delete_stocks()
-    return render_template('list_stocks.html', stocks=stocks)
+
+@app.route('/db/GetAndInsertStocks')
+def get_stocks():
+    crawler_path  = os.path.join(cur_dir, '../crawl/stock_crawl.py')
+    res           = subprocess.run(['python3', crawler_path], text=True)
+    
+    if res.returncode != 0:
+        return jsonify({'Error': 'Crwaler failed', 'Details':res.stderr}), 500
+    
+    return insert_stocks()
 
 def insert_stocks():
-    with open('./crawl/stocks.csv', 'r') as file:
+    cur_time      = datetime.now()
+    output_path   = os.path.join(cur_dir, f'../crawl/stocks_datas/stock_{cur_time.year}_{cur_time.month}_{cur_time.day}.csv')
+    with open(output_path, 'r') as file:
         reader = csv.DictReader(file)
         stocks = []
         for stock in reader:
@@ -214,32 +212,37 @@ def insert_stocks():
                 s[key] = 0
         stock = Stock(id=s['證券代號'], name=s['證券名稱'], volume=s['成交股數'], trans_amt=s['成交金額'], 
                     open=s['開盤價'], close=s['收盤價'], highest=s['最高價'], lowest=s['最低價'], 
-                    change=s['漲跌價差'], trans_num=s['成交筆數'])
+                    change=s['漲跌價差'], trans_num=s['成交筆數'], time_stamp = cur_time)
         db.session.add(stock)
     db.session.commit()
 
+    return jsonify({'Success': 'Stocks inserted!'}), 200
 
-def delete_stocks():
-    stocks = db.session.execute(db.select(Stock)).scalars()
-    for s in stocks:
-        db.session.delete(s)
-    db.session.commit()
+@app.route('/db/GetAndInsertFigures')
+def get_figures():
+    crawler_path  = os.path.join(cur_dir, '../crawl/figure_crawl.py')
+    res           = subprocess.run(['python3', crawler_path], text=True)
+    
+    if res.returncode != 0:
+        return jsonify({'Error': 'Crwaler failed', 'Details':res.stderr}), 500
+    
+    return insert_figures()
 
-@app.route('/figures')
 def insert_figures():
-    with open('./crawl/figure.csv', 'r') as file:
+    cur_time = datetime.now()
+    output_path = os.path.join(cur_dir, f'../crawl/figures_datas/figures_data_{cur_time.year}_{cur_time.month}_{cur_time.day}.csv')
+
+    with open(output_path, 'r') as file:
         reader = csv.DictReader(file)
         figs = []
         for fig in reader:
             figs.append(fig)
     for f in figs:
-        fig = Figure(name=f['name'], volume=f['volume'], open=f['open'], close=f['close'], highest=f['highest'], lowest=f['lowest'])
+        fig = Figure(name=f['指標名稱'], volume=f['成交量(億)'], open=f['開盤'], close=f['收盤'], highest=f['最高'], lowest=f['最低'], time_stamp=cur_time)
         db.session.add(fig)
     db.session.commit()
-        
-
-
-
+    
+    return jsonify({'Success': 'Figures inserted!'}), 200
 
 if __name__ == '__main__':
     app.debug = True

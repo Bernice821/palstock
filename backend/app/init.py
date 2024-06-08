@@ -29,11 +29,3 @@ def create_app():
         create_database()
 
     return app
-
-def fill_null():
-    with open('./crowl/stock.csv', 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            for key, val in row.items():
-                if val == None:
-                    row[key] = 0

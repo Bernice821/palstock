@@ -4,6 +4,12 @@ from datetime import datetime
 import csv
 import os
 
+def string_to_float(str):
+    if str != '' and str != None:
+        float_num = float(str.replace(',', ''))
+        return float_num
+    return str
+
 # 建立變數
 driver = Driver(uc=True, incognito=False, headless=True)
 tiles_set = {"開盤", "最高", "最低", "昨收", "成交量(億)"}
@@ -37,8 +43,9 @@ for url in urls:
     
     # 檢查並補齊缺失的資料
     while len(row_data) < 6:
-        row_data.append("")
+        row_data.append('0.')
     
+    row_data[-1] = string_to_float(row_data[-1])
     csv_writer.writerow(row_data)
 
 # 關閉 CSV 文件

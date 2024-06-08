@@ -56,9 +56,10 @@ class Stock(db.Model):
     
 class Figure(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    time_stamp: Mapped[datetime] = mapped_column(default=lambda: datetime.now(), primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
-    volume: Mapped[int] = mapped_column()
-    open: Mapped[int] = mapped_column()
-    highest: Mapped[int] = mapped_column()
-    lowest: Mapped[int] = mapped_column()
-    close: Mapped[int] = mapped_column()
+    volume: Mapped[float] = mapped_column()
+    open: Mapped[float] = mapped_column()
+    highest: Mapped[float] = mapped_column()
+    lowest: Mapped[float] = mapped_column()
+    close: Mapped[float] = mapped_column()
