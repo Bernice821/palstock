@@ -44,7 +44,7 @@
               </b-form-group>
             </div>
           </div>
-          <div id='stock1' style="width:80%;"><trend /></div>
+          <div id='stock1' style="width:90%;"><trend /></div>
         </b-tab>
         <b-tab title='分析' lazy>
           <div style="margin-left: 2%;">
@@ -71,7 +71,7 @@
               <option value="RSI">RSI</option>
             </select>
           </div>
-          <div id='stock2' style="width:80%;">
+          <div id='stock2' style="width:90%;">
             <div v-if="selectedIndex === 'KDJ'">
               <kdjGraph />
             </div>
@@ -284,25 +284,22 @@ export default {
           });
 
           let var1, var2, var3;
-          let filePath;
+          let filePath ='./data/analysis.js';
           switch (this.selectedIndex) {
             case 'KDJ':
               var1 = returnData.k;
               var2 = returnData.d;
               var3 = returnData.j;
-              filePath = './data/kdj.js';
               break;
             case 'MACD':
               var1 = returnData.dif;
               var2 = returnData.macd;
               var3 = returnData.dif_macd;
-              filePath = './data/macd.js';
               break;
             case 'RSI':
               var1 = returnData.rsi6;
               var2 = returnData.rsi12;
               var3 = returnData.rsi24;
-              filePath = './data/rsi.js';
               break;
             default:
               console.error('Unknown selectedIndex:', this.selectedIndex);
