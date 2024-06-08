@@ -222,6 +222,7 @@ export default {
         {
           const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
             StocksID : this.queryTarget,
+            Stockstitle: '',
             StartDate_T: startDate_T,
             EndDate_T: endDate_T,
             StartDate_P: startDate_P,
@@ -232,6 +233,7 @@ export default {
         else
         {
           const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
+            StocksID : '',
             Stockstitle : this.queryTarget,
             StartDate_T: startDate_T,
             EndDate_T: endDate_T,
