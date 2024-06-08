@@ -25,13 +25,22 @@ export default {
             series1: [{ data: seriesData }],
             chartOptions1: {
                 chart: {
-                    group: 'stock',
+                    group: 'stock_rsi',
                     id: 'price',
                     type: 'candlestick',
                     height: 350
                 },
                 xaxis: {
                     type: 'datetime',
+                    labels: {
+                        formatter: function(value) {
+                            const date = new Date(value);
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份并补零
+                            const day = String(date.getDate()).padStart(2, '0'); // 获取日期并补零
+                            return `${year}/${month}/${day}`; // 格式化为 '2023/02/01'
+                        }
+                    },
                 },
                 tooltip: {
                     enabled: true,
@@ -71,7 +80,7 @@ export default {
             ],
             chartOptions2: {
                 chart: {
-                    group: 'stock',
+                    group: 'stock_rsi',
                     id: 'analysis',
                     type: 'line',
                 },
@@ -91,7 +100,19 @@ export default {
                     // dashArray: [0, 0, 3]
                 },
                 xaxis: {
-                    type: 'datetime'
+                    type: 'datetime',
+                    tooltip: {
+                        enabled: false
+                    },
+                    labels: {
+                        formatter: function(value) {
+                            const date = new Date(value);
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份并补零
+                            const day = String(date.getDate()).padStart(2, '0'); // 获取日期并补零
+                            return `${year}/${month}/${day}`; // 格式化为 '2023/02/01'
+                        }
+                    },
                 },
                 yaxis: {
                     tooltip: {

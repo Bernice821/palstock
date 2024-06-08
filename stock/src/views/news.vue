@@ -1,17 +1,17 @@
 <template>
   <div style="margin-left:3%;">
     <h3 class="text-2xl font-bold py-2" style="color:#1B3C73;text-align:left;font-size: 30px">股票新聞</h3>
-    <h4 class="text-xl font-bold py-2" style="color:#1B3C73;text-align:left">最新新聞（測試用）</h4>
+    <h4 class="text-xl font-bold py-2" style="color:#1B3C73;text-align:left">最新新聞</h4>
     <div>
       <b-container>
         <b-row cols="1" cols-md="2" cols-xl="3">
           <b-col v-for="news in getRecentNews">
-            <a v-bind:href="news.url">
-              <div class="news">
-                <img class="news-img" v-bind:src="news.imgurl">
+            <a v-bind:href="news.Url">
+              <div class="news img-on-top">
+                <img class="news-img" v-bind:src="news.ImgUrl">
                 <div class="news-content">
-                  <h5 class="news-title" v-bind:title="news.title">{{news.title}}</h5>
-                  <span class="news-date">{{news.time}}</span>
+                  <h5 class="news-title" v-bind:title="news.Title">{{news.Title}}</h5>
+                  <span class="news-date">{{news.Time}}</span>
                 </div>
               </div>
             </a>
@@ -200,7 +200,14 @@ export default {
   compatConfig: { MODE: 3 },
   data() {
     return {
-      recentNews: []
+      recentNews: [
+        {
+          "Title": "Rick Astley - Never Gonna Give You Up",
+          "Url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          "ImgUrl": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg",
+          "Time": "2009 年 10 月 25 日"
+        }
+      ]
     };
   },
   computed: {
@@ -210,16 +217,16 @@ export default {
   },
   methods: {
     async fetchNews() {
-      /*try {
+      try {
         const response = await axios.post('http://127.0.0.1:12000/api/newsStocks', {
           newsNum: 12,
         });
         // const data = response.data;
-        this.recentNews = response.data.ReturnData.news;
+        this.recentNews = response.data;
       } catch (error) {
         console.error('Error fetching index:', error);
-      }*/
-      this.recentNews = newsArray;
+      }
+      // this.recentNews = newsArray;
     },
   },
   mounted() {
@@ -227,11 +234,7 @@ export default {
   }
 }
 </script>
-<<<<<<< HEAD
-<style scoped>
-=======
 <style scoped lang="scss">
->>>>>>> 7247ff889a3788cefebf7203f6eac37bb236382c
 .col {
   padding: 0;
 }
@@ -244,18 +247,19 @@ a {
 .news {
   --img-width: 8rem;
   --img-height: 6rem;
+  --news-height: 6rem;
   position: relative;
   margin-bottom: 0.5rem;
   /*border: 1px solid #888888;*/
   border-radius: 3px;
-  height: var(--img-height);
+  height: var(--news-height);
   transition-duration: 0.5s;
   * {
   text-align: left;
   }
   &:hover {
     /*z-index: 2,*/
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 }
 
@@ -272,6 +276,18 @@ a {
 .news-content {
   margin-left: var(--img-width);
   padding: 0.25rem;
+}
+
+.news.img-on-top {
+  --img-width: 100%;
+  --img-height: 15rem;
+  --news-height: calc(var(--img-height) + 6rem);
+  .news-img {
+    position: relative;
+  }
+  .news-content {
+    margin-left: 0;
+  }
 }
 
 .news-title {
