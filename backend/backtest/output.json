@@ -15,7 +15,7 @@
             "Max.Drawdown": 35.76,
             "SharpeRatio": 0.21,
             "SortioRatio": 0.44,
-            "Benhmark": -0.084
+            "Benchmark": -0.084
         },
         {
             "title": "Portfolio2",
@@ -30,7 +30,7 @@
             "Max.Drawdown": 34.63,
             "SharpeRatio": 0.21,
             "SortioRatio": 0.44,
-            "Benhmark": -0.085
+            "Benchmark": -0.085
         },
         {
             "title": "Portfolio3",
@@ -45,7 +45,7 @@
             "Max.Drawdown": 32.81,
             "SharpeRatio": 0.2,
             "SortioRatio": 0.44,
-            "Benhmark": -0.091
+            "Benchmark": -0.091
         }
     ]
 }

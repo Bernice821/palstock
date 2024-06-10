@@ -272,7 +272,7 @@ if __name__ == '__main__':
     initial_Amount= data['initialAmount']
     ContributionAmount= 0
     Withdraw_account= 0
-    Benhmark= data["Benhmark"]
+    Benchmark= data["Benchmark"]
     Deposit_account= 0
     Frequency= 0
 
@@ -313,7 +313,7 @@ if __name__ == '__main__':
             stock_data = bt.feeds.PandasData(dataname=yf.download(StockID, start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             cerebro.adddata(stock_data)
         #大盤購買策略
-        if Benhmark== 1:
+        if Benchmark== 1:
             stock_data = bt.feeds.PandasData(dataname=yf.download('^TWII', start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             TWII.adddata(stock_data)
             TWII.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount, allocation= [1], frequency= Frequency, rebalancing= Rebalancing)
@@ -360,7 +360,7 @@ if __name__ == '__main__':
         print(f"夏普比率: {round(sharpe_ratio['sharperatio'],2)}")
         print(f"最大回撤: {round(drawdown['max']['drawdown'],2)}")
         print('索蒂諾比率:', round(sortino_ratio['sortino_ratio'],2))
-        if Benhmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
+        if Benchmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
 
 
         Returndata['title']= "Portfolio"+str(i+1)
@@ -375,7 +375,7 @@ if __name__ == '__main__':
         Returndata['Max.Drawdown']= round(drawdown['max']['drawdown'],2)
         Returndata['SharpeRatio']= round(sharpe_ratio['sharperatio'],2)
         Returndata['SortioRatio']= round(sortino_ratio['sortino_ratio'],2)
-        if Benhmark==1: Returndata['Benhmark']= round(results[0].Roi- TWII_results[0].Roi,3)
+        if Benchmark==1: Returndata['Benchmark']= round(results[0].Roi- TWII_results[0].Roi,3)
 
         #將股票回測結果貼上
         Returndict['ReturnData'].append(Returndata)

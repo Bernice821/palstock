@@ -1,7 +1,7 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, BigInteger, Identity, DateTime
-from init import db 
 from datetime import datetime
+from .init import db 
 
 class New(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

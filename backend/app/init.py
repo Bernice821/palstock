@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String
+from sqlalchemy.orm import DeclarativeBase
 from os import path
-import csv
 
 DB_NAME = 'db'
 
@@ -20,12 +18,22 @@ def create_database():
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'my_key'
-    # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:12345678@localhost:3306/{DB_NAME}'
     db.init_app(app)
 
+    from .func import func
+    from .api  import api
+    from .database   import database
+    app.register_blueprint(database, url_prefix='/')
+    app.register_blueprint(api, url_prefix='/')
+    app.register_blueprint(func, url_prefix='/')
+
+
+
+    print(app.url_map)
+
     with app.app_context():
-        # db.drop_all()
         create_database()
+
 
     return app
