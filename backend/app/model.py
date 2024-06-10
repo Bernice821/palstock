@@ -19,7 +19,7 @@ class New(db.Model):
             'Title' : self.title,
             'Url'   : self.url,
             'ImgUrl': self.pic_url,
-            'Time'  : self.time_stamp
+            'Time'  : datetime.strftime(self.time_stamp, "%Y-%m-%d") 
         }
 
 
