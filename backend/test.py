@@ -11,7 +11,7 @@ def test_newsStocks(client):
     }
     res = client.post('/api/newsStocks', json=input)
     assert res.status_code == 200
-    print(res.get_json())
+    print(type(res))
 
 client = app.test_client()
 test_newsStocks(client)
