@@ -20,7 +20,8 @@
     "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.5.1",
     "vue-sidebar-menu-akahon": "^1.0.2",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "vue-mathjax": "^latest"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
