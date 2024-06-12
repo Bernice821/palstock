@@ -68,7 +68,7 @@
               </div>
             </div>
           </div>
-          <div class="row" v-if="TimePeriods == 'Year/Month-To-Year/Month'">
+          <div class="row">
             <div class="col-md-12">
               <div class="form-group">
                 <div class="row">
@@ -95,7 +95,7 @@
               </div>
             </div>
           </div>
-          <div class="row" v-if="TimePeriods == 'Year/Month-To-Year/Month'">
+          <div class="row">
             <div class="col-md-12">
               <div class="form-group">
                 <div class="row">
@@ -104,6 +104,60 @@
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Last Month</label></div>
                   <div class="col"><select id="dropdown" name="role" class="form-control" v-model="LastMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="TimePeriods === 'Year/Month-To-Year/Month'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>Start Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="StartMonth" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-if="TimePeriods === 'Year/Month-To-Year/Month'">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-3"><label id="email-label" for="email"><b-button variant="light"
+                        v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
+                        style="color:#1B3C73;margin-right:12px">
+                        *</b-button>End Month</label></div>
+                  <div class="col"><select id="dropdown" name="role" class="form-control" v-model="EndMonth" required>
                       <option value="January">January</option>
                       <option value="February">February</option>
                       <option value="March">March</option>
@@ -386,7 +440,6 @@
 </template>
 <script>
 import axios from 'axios';
-import Router from 'vue-router';
 export default {
   data() {
     return {
@@ -405,15 +458,14 @@ export default {
       DisplayIncome: 0,
       Benhmark: 0,
       Portfolios: {},
-      StockID: [],
+      StockID: 0,
       part: [],
-      rowData: Array.from({ length: 5 }, () => (
-        { name: '', allocation1: 0, allocation2: 0, allocation3: 0 },
-        { name: '', allocation1: 0, allocation2: 0, allocation3: 0 },
-        { name: '', allocation1: 0, allocation2: 0, allocation3: 0 },
-        { name: '', allocation1: 0, allocation2: 0, allocation3: 0 },
-        { name: '', allocation1: 0, allocation2: 0, allocation3: 0 }
-      )),
+      rowData: Array.from({ length: 5 }, () => ({
+        name: '',
+        allocation1: 0,
+        allocation2: 0,
+        allocation3: 0,
+      })),
     };
   }, methods: {
     async analysis() {
@@ -421,16 +473,13 @@ export default {
         alert('請勿超過100%!');
         return;
       }
-      // if (this.TimePeriods === "" || this.StartYear === 0 || this.EndYear === 0 ||
-      //   this.IncludeYTD===0 || this.initialAmount === 0 || this.CashFlows==="" || this.Rebalancing === ""|| this.ReinvestDividends === 0 || this.DisplayIncome === "" || this.Benchmark === 0) {
-      //   alert('未完成填寫！');
-      //   return; // 不執行分析操作
-      // }
+      if (this.TimePeriods === "" || this.StartYear === 0 || this.EndYear === 0 || this.FirstMonth === 0 || this.LastMonth === 0 ||
+        this.IncludeYTD===0 || this.initialAmount === 0 || this.CashFlows==="" || this.Rebalancing === ""|| this.ReinvestDividends === 0 || this.DisplayIncome === "" || this.Benchmark === 0) {
+        alert('未完成填寫！');
+        return; // 不執行分析操作
+      }
       try {
-        const Portfolios = this.rowData.map(row => ({
-        StockID: row.name,
-            part: [row.allocation1, row.allocation2, row.allocation3]
-          }));
+        console.log(this.initialAmount)
         const response = await axios.post('http://127.0.0.1:12000/api/StrategyStock', {
           TimePeriods: this.TimePeriods,
           StartYear: this.StartYear,
@@ -446,12 +495,11 @@ export default {
           ReinvestDividends: this.ReinvestDividends,
           DisplayIncome: this.DisplayIncome,
           Benhmark: this.Benchmark,
-          Portfolios:Portfolios
+          Portfolios: this.Portfolios,
+          StockID: this.StockID,
+          part: this.part
         });
         const data = response.data;
-        console.log(data)
-        this.$router.push({ path: '/result' });
-
       } catch (error) {
         console.error('Error fetching index:', error);
       }

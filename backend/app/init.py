@@ -18,7 +18,7 @@ def create_database():
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'my_key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:@localhost:3306/{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://root:12345678@localhost:3306/{DB_NAME}'
     db.init_app(app)
 
     from .func import func
@@ -27,10 +27,6 @@ def create_app():
     app.register_blueprint(database, url_prefix='/')
     app.register_blueprint(api, url_prefix='/')
     app.register_blueprint(func, url_prefix='/')
-
-
-
-    print(app.url_map)
 
     with app.app_context():
         create_database()

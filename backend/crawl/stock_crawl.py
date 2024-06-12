@@ -19,4 +19,5 @@ if response.status_code == 200:
     file_path = os.path.join(cur_dir, 'stocks_datas', file_name)
     with open(file_path, 'w') as f: #下載路徑依照需求更改，目前為預設路徑
         f.write(response.text)
-else:   print(response.status_code)
+else:   
+    print(response.status_code)

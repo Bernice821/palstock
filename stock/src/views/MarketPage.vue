@@ -39,20 +39,18 @@
       </span>
       <span class="current-price">
         <span id="price-today" style="font-size: 48px;">{{ TaiwanPriceToday }}</span>
-        <span id="price-change" style="margin-left: 10px;">{{ priceChange(TaiwanPriceToday, TaiwanPriceYesterday)
-          }}</span>
-        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(TaiwanPriceToday,
-              TaiwanPriceYesterday), TaiwanPriceYesterday) }}%)</span>
+        <span id="price-change" style="margin-left: 10px;">{{ priceChange(TaiwanPriceToday, TaiwanPriceYesterday) }}</span>
+        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(TaiwanPriceToday, TaiwanPriceYesterday), TaiwanPriceYesterday) }}%)</span>
       </span>
     </div>
-    <div class="stock-tab">
+    <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
         <div style="margin-left:2%; width:50%">
           <select id="time-select" name="time" v-model="selectedTime_Taiwan">
-            <option disabled value='30'>一個月</option>
-            <option value='30'>一個月</option>
-            <option value='90'>三個月</option>
-            <option value='365'>一年</option>
+            <option disabled value='30' >一個月</option>
+            <option value='30' >一個月</option>
+            <option value='90' >三個月</option>
+            <option value='365' >一年</option>
             <option value="custom">自選</option>
           </select>
           <div v-if="selectedTime_Taiwan === 'custom'" style="margin-top:2%;">
@@ -63,7 +61,7 @@
               <b-form-input type="date" v-model="EndDate_Taiwan"></b-form-input>
             </b-form-group>
           </div>
-        </div>
+        </div>  
       </div>
       <div id='stock1' style="width:80%;">
         <trend />
@@ -78,18 +76,17 @@
       <span class="current-price">
         <span id="price-today" style="font-size: 48px;">{{ DJPriceToday }}</span>
         <span id="price-change" style="margin-left: 10px;">{{ priceChange(DJPriceToday, DJPriceYesterday) }}</span>
-        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(DJPriceToday,
-              DJPriceYesterday), DJPriceYesterday) }}%)</span>
+        <span id="price-change-percent" style="margin-left: 10px;">({{ priceChangePercent(priceChange(DJPriceToday, DJPriceYesterday), DJPriceYesterday) }}%)</span>
       </span>
     </div>
-    <div class="stock-tab">
+    <div class="stock-tab" >
       <div class="col-3" style="z-index: 1; width:100%">
         <div style="margin-left:2%; width:50%">
           <select name="time" v-model="selectedTime_DJ">
-            <option disabled value='30'>一個月</option>
-            <option value='30'>一個月</option>
-            <option value='90'>三個月</option>
-            <option value='365'>一年</option>
+            <option disabled value='30' >一個月</option>
+            <option value='30' >一個月</option>
+            <option value='90' >三個月</option>
+            <option value='365' >一年</option>
             <option value="custom">自選</option>
           </select>
           <div v-if="selectedTime_DJ === 'custom'" style="margin-top:2%;">
@@ -100,10 +97,10 @@
               <b-form-input type="date" v-model="EndDate_DJ"></b-form-input>
             </b-form-group>
           </div>
-        </div>
+        </div>  
       </div>
       <div id='stock1' style="width:80%;">
-        <DJtrend />
+        <DJtrend/>
       </div>
     </div>
   </div>
@@ -112,9 +109,7 @@
 import VueApexCharts from 'vue-apexcharts'
 import trend from './graph/trend.vue'
 import DJtrend from './graph/DJtrend.vue'
-// import { seriesData } from './data/stockPrice.js'
-import axios from 'axios'
-import {IndicatorsHistory} from './data/stock.js'
+import { seriesData } from './data/stockPrice.js'
 
 export default {
   components: {
@@ -122,22 +117,23 @@ export default {
     trend,
     DJtrend
   },
-  data() {
+  data () {
     return {
-      TaiwanPriceToday: 19,
+      TaiwanPriceToday: 123.23,
       TaiwanPriceYesterday: 134.12,
       DJPriceToday: 379.29,
-      DJPriceYesterday: 365.23,
-      StartDate_Taiwan: '',
+      DJPriceYesterday:365.23,
+      StartDate_Taiwan: '',  
       EndDate_Taiwan: '',
-      StartDate_DJ: '',
+      StartDate_DJ: '',  
       EndDate_DJ: '',
       Indicators: 32,
+      IndicatorsHistory: '',
       selectedTime_Taiwan: '30',
       selectedTime_DJ: '30',
-      seriesIndicator: [{
+      seriesIndicator: [{ 
         name: 'score',
-        data: IndicatorsHistory
+        data: this.IndicatorsHistory
       }],
       chartOptions: {
         chart: {
@@ -150,8 +146,8 @@ export default {
         tooltip: {
           enabled: true,
           x: {
-            show: true,
-            format: 'yyyy-MM',
+              show: true,
+              format: 'yyyy/MM/dd',
           }
         },
         dataLabels: {
@@ -179,16 +175,16 @@ export default {
       immediate: true // 立即調用一次，以處理初始選擇
     },
     StartDate_Taiwan: {
-      handler: 'checkBothDate_Taiwan'
+      handler: 'checkBothDate_Taiwan' 
     },
     EndDate_Taiwan: {
-      handler: 'checkBothDate_Taiwan'
+      handler: 'checkBothDate_Taiwan' 
     },
     StartDate_DJ: {
-      handler: 'checkBothDate_DJ'
+      handler: 'checkBothDate_DJ' 
     },
     EndDate_DJ: {
-      handler: 'checkBothDate_DJ'
+      handler: 'checkBothDate_DJ' 
     }
   },
   methods: {
@@ -212,7 +208,7 @@ export default {
         console.log('Both StartDate_DJ and EndDate_DJ must be set.');
       }
     },
-    async fetchInfo() {
+    async fetchInfo(){
       let startDate_T = this.StartDate_Taiwan;
       let endDate_T = this.EndDate_Taiwan;
       let startDate_P = this.StartDate_DJ;
@@ -222,7 +218,7 @@ export default {
         let today = new Date();
         let selectedDays = parseInt(this.selectedTime_Taiwan);
         let pastDate = new Date(today);
-        pastDate.setDate(today.getDate() - selectedDays);
+        pastDate.setDate(today.getDate() - selectedDays);       
         startDate_T = pastDate.toISOString().split('T')[0];
         endDate_T = today.toISOString().split('T')[0];
         if (!isNaN(pastDate.getTime())) {
@@ -236,7 +232,7 @@ export default {
         let today = new Date();
         let selectedDays = parseInt(this.selectedTime_DJ);
         let pastDate = new Date(today);
-        pastDate.setDate(today.getDate() - selectedDays);
+        pastDate.setDate(today.getDate() - selectedDays);  
         if (!isNaN(pastDate.getTime())) {
           startDate_P = pastDate.toISOString().split('T')[0];
           endDate_P = today.toISOString().split('T')[0];
@@ -251,19 +247,58 @@ export default {
           EndDate_Taiwan: endDate_T,
           StartDate_DJ: startDate_P,
           EndDate_DJ: endDate_P
-        });
+        });       
+     
+        const data = response.data;
+        const fs = require('fs');
 
-        const returnData = response.data;
-        //console.log(returnData)
-        this.TaiwanPriceToday = returnData.TaiwanPriceToday;
-        this.TaiwanPriceYesterday = returnData.TaiwanPriceYesterday;
+        if (data.StatusCode === 200) {
+          this.TaiwanpriceToday = returnData.TaiwanpriceToday;
+          this.TaiwanpriceYesterday = returnData.TaiwanpriceYesterday;
 
-        this.DJPriceToday = returnData.DJPriceToday;
-        this.DJPriceYesterday = returnData.DJPriceYesterday;
-        this.changeColor();
+          this.DJpriceToday = returnData.DJpriceToday;
+          this.DJpriceYesterday = returnData.DJpriceYesterday;
+          this.changeColor();
 
-        this.Indicators = returnData.Indicators;
+          this.Indicators = returnData.Indicators;
+          this.IndicatorsHistory = returnData.IndicatorsHistory;
 
+          // 寫入 StockPrice 到 stockPrice.js
+          const TaiwanstockPrices = returnData.TaiwanStocksChart;
+          const fileContent1 = `const seriesData = ${JSON.stringify(TaiwanstockPrices, null, 2)};\n\nexport default seriesData;\n`;
+          fs.writeFile('./data/stockPrice.js', fileContent1, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing stockPrices:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/stockPrice.js');
+            }
+          });
+
+          // 寫入 volume 到 volume.js
+          const volume = returnData.TaiwanVolume;
+          const fileContent2 = `const VolData = ${JSON.stringify(volume, null, 2)};\n\nexport default VolData;\n`;
+          fs.writeFile('./data/volume.js', fileContent2, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing volume:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/volume.js');
+            }
+          });
+
+          // 寫入 DJStockPrice 到 DJstockPrice.js
+          const DJPrices = returnData.DJStocksChart;
+          const fileContent3 = `const seriesData = ${JSON.stringify(DJPrices, null, 2)};\n\nexport default seriesData;\n`;
+          fs.writeFile('./data/DJstockPrice.js', fileContent3, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing DJstockPrices:', err);
+            } else {
+              console.log('Data fetched and saved to ./data/DJstockPrice.js');
+            }
+          });
+          console.log('queryType:', this.StartDate_DJ);
+        console.log('queryTarget:', this.EndDate_DJ);
+        console.log('priceToday:', this.StartDate_Taiwan)   
+        }
       } catch (error) {
         console.error('Error fetching index:', error);
       }
@@ -273,20 +308,20 @@ export default {
       const elm2 = document.querySelectorAll("#price-change-percent");
       const elm3 = document.querySelectorAll("#price-today");
       let Change;
-      for (var i = 0; i < elm1.length; i++) {
-        if (i == 0) {
+      for(var i=0; i<elm1.length; i++){
+        if(i==0){
           Change = this.priceChange(this.TaiwanPriceToday, this.TaiwanPriceYesterday);
         }
-        else {
+        else{
           Change = this.priceChange(this.DJPriceToday, this.DJPriceYesterday);
         }
-        if (Change > 0) {
+        if(Change > 0){       
           elm1[i].style.color = '#EF403C';
           elm1[i].textContent = `▲${Change}`;
           elm2[i].style.color = '#EF403C';
           elm3[i].style.color = '#EF403C';
-        } else if (Change < 0) {
-          elm1[i].style.color = '#00B746';
+        }else if (Change < 0) {
+          elm1[i].style.color = '#00B746';       
           elm2[i].style.color = '#00B746';
           elm3[i].style.color = '#00B746';
           let noMinus = Math.abs(Change);
@@ -297,8 +332,9 @@ export default {
     priceChange(priceToday, priceYesterday) {
       return (priceToday - priceYesterday).toFixed(2);
     },
-    priceChangePercent(priceChange, priceYesterday) {
-      return ((priceChange / priceYesterday) * 100).toFixed(2);
+    priceChangePercent(priceChange, priceYesterday)
+    {
+      return ((priceChange/priceYesterday)*100).toFixed(2);
     }
   },
   mounted() {
@@ -329,7 +365,7 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(182, 182, 182, 0.8);
   transition: 0.3s;
   width: 80%;
-  height: 90%;
+  height:90%;
 }
 
 /* CHART-SKILLS STYLES
@@ -492,21 +528,21 @@ export default {
 }
 
 .stock-info {
-  display: flex;
-  align-items: center;
-  font-size: 36px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  margin-left: 2%;
-  margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 36px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    margin-left: 2%;
+    margin-bottom: 10px;
 }
 
 .current-price {
-  font-size: 24px;
-  font-weight: bold;
-  margin-left: 15px;
-  display: flex;
-  align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .stock-name {
@@ -516,30 +552,30 @@ export default {
   padding: 10px;
 }
 
-.stock-tab {
-  margin-top: 2%;
-  text-align: left;
-  margin-left: 2%;
+.stock-tab{
+    margin-top: 2%;
+    text-align: left;
+    margin-left: 2%;
 }
 
 select {
-  font-size: 16px;
-  color: #333;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 16px;
+    color: #333;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-  border-color: #66afe9;
-  outline: none;
-  box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
 }
 
 /* 選項樣式 */
 select option {
-  padding: 10px;
+    padding: 10px;
 }
 </style>
