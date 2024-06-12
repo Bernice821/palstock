@@ -111,7 +111,6 @@ def index_stocks():
             stock['StocksTitle'] = data.name
             stock['StocksChart'].append(data.close)
         stocks.append(stock)
-    print(stocks)
     return jsonify(stocks)
 
 
@@ -146,7 +145,7 @@ def stock_information():
     name = req['Stockstitle']
     
     start_T = datetime.strptime(req['StartDate_T'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")  #當天亦可包含至query結果內
-    end_T = datetime.strptime(req['EndDate_T'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")  
+    end_T = datetime.strptime(req['EndDate_T'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")
     start_P = datetime.strptime(req['StartDate_P'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")
     end_P = datetime.strptime(req['EndDate_P'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")
     index = req['selectedIndex']
@@ -203,4 +202,3 @@ def stock_information():
         stock[key] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df[key.upper()].to_list())]
 
     return jsonify(stock)
-

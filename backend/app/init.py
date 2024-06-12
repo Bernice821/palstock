@@ -28,10 +28,6 @@ def create_app():
     app.register_blueprint(api, url_prefix='/')
     app.register_blueprint(func, url_prefix='/')
 
-
-
-    print(app.url_map)
-
     with app.app_context():
         create_database()
 
