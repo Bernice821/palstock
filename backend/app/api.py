@@ -88,6 +88,52 @@ def market_page():
         indicator_info['y'] = indicator.score
         fig['IndicatorsHistory'].append(indicator_info)
 
+    js_content = f'export const IndicatorsHistory = {json.dumps(fig["IndicatorsHistory"], indent=2)};'
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/stock.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+
+
+    js_content = f'export const seriesData = {json.dumps(fig["TaiwanStocksChart"], indent=2)};'
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/stockPrice.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+
+    js_content = f'export const VolData = {json.dumps(fig["TaiwanVolume"], indent=2)};'
+
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/volume.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+    
+    js_content = f'export const series = {json.dumps(fig["DJStocksChart"], indent=2)};'
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/DJstockPrice.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+    
     return jsonify(fig)
 
 @api.route('/api/indexStocks', methods=['POST'])
@@ -111,31 +157,45 @@ def index_stocks():
             stock['StocksTitle'] = data.name
             stock['StocksChart'].append(data.close)
         stocks.append(stock)
+    print(stocks)
     return jsonify(stocks)
 
 
 @api.route('/api/StrategyStock', methods=['POST'])
 def strategy_stock():
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
     input_path  = os.path.join(cur_dir, '../backtest/buy_and_hold.json')
     py_path     = os.path.join(cur_dir, '../backtest/backtest.py')
     output_path  = os.path.join(cur_dir, '../backtest/output.json')
+    print(output_path)
 
     data = request.get_json()
+
     with open(input_path, 'w') as f:
         json.dump(data, f)
 
-    test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
+    # test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
 
-    if test_res.returncode != 0:
-        return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
-    
+    # if test_res.returncode != 0:
+    #     return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
     if os.path.exists(output_path):
         with open(output_path, 'r') as f:
             output = json.load(f)
+        print(output)
+        js_content = f'export const seriesData = {json.dumps(output, indent=2)};'
+
+        # 写入到 JavaScript 文件中
+        file_path = '../../palstock/stock/src/views/data/buyandhold.js'
+        try:
+            with open(file_path, 'w') as file:
+                file.write(js_content)
+            print(f'Data written to {file_path}')
+        except Exception as e:
+            print(f'Error writing data to {file_path}: {e}')
+
         return jsonify(output)
     else:
         return jsonify({'error': 'Output file not found'}), 500
-
 
 @api.route('/api/StockInformation', methods=['POST'])
 def stock_information():
@@ -145,11 +205,14 @@ def stock_information():
     name = req['Stockstitle']
     
     start_T = datetime.strptime(req['StartDate_T'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")  #當天亦可包含至query結果內
-    end_T = datetime.strptime(req['EndDate_T'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")
+    end_T = datetime.strptime(req['EndDate_T'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")  
     start_P = datetime.strptime(req['StartDate_P'] + " 00:00:00", "%Y-%m-%d %H:%M:%S")
     end_P = datetime.strptime(req['EndDate_P'] + " 23:59:59", "%Y-%m-%d %H:%M:%S")
     index = req['selectedIndex']
 
+    print(index)
+    print(start_T)
+    print(end_T)
 
     #可能只有id或title
 
@@ -167,8 +230,6 @@ def stock_information():
     yesterday_price = latest_datas[1].close
     stock = {}
 
-
-
     stock['StockPrice'] = []
     stock['Volume'] = []
     stock['priceToday'] = today_price
@@ -180,7 +241,7 @@ def stock_information():
 
         price_info = {}
         price_info['x'] = data.time_stamp.strftime('%Y-%m-%d')
-        price_info['y'] = [data.open, data.highest, data.lowest, data.close]
+        price_info['y'] = [data.open, data.highest, data.lowest, data.close]  
         stock['StockPrice'].append(price_info)
 
         vol_info  = {}
@@ -199,6 +260,94 @@ def stock_information():
     stk_key = ['k', 'd', 'j', 'dif', 'macd', 'dif-macd', 'rsi6', 'rsi12', 'rsi24']
 
     for key in stk_key:
-        stock[key] = [{'x':x, 'y':y} for x, y, in zip( P_df['time_stamp'].to_list(), P_df[key.upper()].to_list())]
+        # 将 "NaN" 替换为空字符串
+        values = [y if y != "nan" else "" for y in P_df[key.upper()].to_list()]
+        stock[key] = [{'x': x, 'y': y} for x, y in zip(P_df['time_stamp'].to_list(), values)]
+
+    
+    stock_data = stock['StockPrice']
+    print(stock)
+
+    # 将 JavaScript 对象转换为字符串
+    js_content = f'export const seriesData = {json.dumps(stock_data, indent=2)};'
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/stockPrice.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+
+
+    stock_data = stock['Volume']
+
+    # 将 JavaScript 对象转换为字符串
+    js_content = f'export const VolData = {json.dumps(stock_data, indent=2)};'
+
+    # 写入到 JavaScript 文件中
+    file_path = '../../palstock/stock/src/views/data/volume.js'
+    try:
+        with open(file_path, 'w') as file:
+            file.write(js_content)
+        print(f'Data written to {file_path}')
+    except Exception as e:
+        print(f'Error writing data to {file_path}: {e}')
+
+    if index == "KDJ":
+        var1 = stock['k']
+        var2 = stock['d']
+        var3 = stock['j']
+
+        # 将数据写入到 JavaScript 文件中
+        js_content = f'export const var1 = {json.dumps(var1, indent=2)};\n'
+        js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
+        js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
+
+        file_path = '../../palstock/stock/src/views/data/analysis.js'
+
+        try:
+            with open(file_path, 'w') as file:
+                file.write(js_content)
+            print(f'Data written to {file_path}')
+        except Exception as e:
+            print(f'Error writing data to {file_path}: {e}')
+    elif index == "MACD":
+        var1 = stock['dif']
+        var2 = stock['macd']
+        var3 = stock['dif-macd']
+
+        # 将数据写入到 JavaScript 文件中
+        js_content = f'export const var1 = {json.dumps(var1, indent=2)};\n'
+        js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
+        js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
+
+        file_path = '../../palstock/stock/src/views/data/analysis.js'
+
+        try:
+            with open(file_path, 'w') as file:
+                file.write(js_content)
+            print(f'Data written to {file_path}')
+        except Exception as e:
+            print(f'Error writing data to {file_path}: {e}')
+    elif index == "RSI":
+        var1 = stock['rsi6']
+        var2 = stock['rsi12']
+        var3 = stock['rsi24']
+
+        # 将数据写入到 JavaScript 文件中
+        js_content = f'export const var1 = {json.dumps(var1, indent=2)};\n'
+        js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
+        js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
+
+        file_path = '../../palstock/stock/src/views/data/analysis.js'
+
+        try:
+            with open(file_path, 'w') as file:
+                file.write(js_content)
+            print(f'Data written to {file_path}')
+        except Exception as e:
+            print(f'Error writing data to {file_path}: {e}')
 
     return jsonify(stock)
