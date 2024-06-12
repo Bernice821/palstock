@@ -478,11 +478,9 @@
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script>
 import axios from 'axios';
-import MathJax from 'vue-mathjax'
 import {seriesData} from './data/buyandhold.js'
 export default {
   components: {
-    MathJax
   },
   data() {
     return {
