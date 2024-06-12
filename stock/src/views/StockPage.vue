@@ -8,7 +8,8 @@
         <option value="symbol">股票代碼</option>
         <option value="name">股票名稱</option>
       </select>
-      <b-form-input type='text' v-model='queryTarget' placeholder='請輸入欲查詢股票' style="width:50%; margin-left:1%;" @keyup.enter="submitQuery" required></b-form-input>
+      <b-form-input type='text' v-model='queryTarget' placeholder='請輸入欲查詢股票' style="width:50%; margin-left:1%;"
+        @keyup.enter="submitQuery" required></b-form-input>
       <b-button @click="submitQuery" variant="outline-secondary" style="margin-left:1%">搜尋</b-button>
     </div>
 
@@ -29,10 +30,10 @@
         <b-tab title='走勢圖'>
           <div style="margin-left:2%; width:50%">
             <select id="time-select" name="time" v-model="selectedTime">
-              <option disabled value='30' >一個月</option>
-              <option value='30' >一個月</option>
-              <option value='90' >三個月</option>
-              <option value='365' >一年</option>
+              <option disabled value='30'>一個月</option>
+              <option value='30'>一個月</option>
+              <option value='90'>三個月</option>
+              <option value='365'>一年</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedTime === 'custom'" style="margin-top:2%;">
@@ -44,15 +45,17 @@
               </b-form-group>
             </div>
           </div>
-          <div id='stock1' style="width:90%;"><trend /></div>
+          <div id='stock1' style="width:90%;">
+            <trend />
+          </div>
         </b-tab>
         <b-tab title='分析' lazy>
           <div style="margin-left: 2%;">
             <select id="period-select" name="period" v-model="selectedPeriod">
-              <option disabled value='7' >週線</option>
-              <option value='7' >週線</option>
-              <option value='30' >月線</option>
-              <option value='365' >年線</option>
+              <option disabled value='7'>週線</option>
+              <option value='7'>週線</option>
+              <option value='30'>月線</option>
+              <option value='365'>年線</option>
               <option value="custom">自選</option>
             </select>
             <div v-if="selectedPeriod === 'custom'" style="margin-top:2%; margin-bottom: 2%;">
@@ -88,7 +91,7 @@
   </div>
 </template>
 
-<script >
+<script>
 import trend from './graph/trend.vue'
 import kdjGraph from './graph/KDJ.vue'
 import rsiGraph from './graph/RSI.vue'
@@ -103,21 +106,23 @@ export default {
     rsiGraph,
     macdGraph
   },
-  data () {
+  data() {
     return {
       stockName: '台積電',
       stockSymbol: '2330',
       queryType: 'symbol',
       queryTarget: '2330',
       selectedTime: '30',
-      StartDate_T: '',  
+      StartDate_T: '',
       EndDate_T: '',
       selectedPeriod: '7',
-      StartDate_P: '',  
+      StartDate_P: '',
       EndDate_P: '',
-      selectedIndex:'KDJ',
-      priceToday: 213.12, 
+      selectedIndex: 'KDJ',
+      priceToday: 213.12,
       priceYesterday: 211.94,
+      stocksTitle :[],
+      stocks: [] 
       // priceChange: '',
       // priceChangePercent: ''
     }
@@ -132,16 +137,20 @@ export default {
       immediate: true // 立即調用一次，以處理初始選擇
     },
     StartDate_T: {
-      handler: 'checkBothDate_T' 
+      handler: 'checkBothDate_T'
     },
     EndDate_T: {
-      handler: 'checkBothDate_T' 
+      handler: 'checkBothDate_T'
     },
     StartDate_P: {
-      handler: 'checkBothDate_P' 
+      handler: 'checkBothDate_P'
     },
     EndDate_P: {
-      handler: 'checkBothDate_P' 
+      handler: 'checkBothDate_P'
+    },
+    selectedIndex : {
+      handler: 'fetchInfo', // 調用 fetchInfo 函數
+      immediate: true 
     }
   },
   methods: {
@@ -184,7 +193,7 @@ export default {
         console.log('Both StartDate_P and EndDate_P must be set.');
       }
     },
-    async fetchInfo(){
+    async fetchInfo() {
       let startDate_T = this.StartDate_T;
       let endDate_T = this.EndDate_T;
       let startDate_P = this.StartDate_P;
@@ -194,7 +203,7 @@ export default {
         let today = new Date();
         let selectedDays = parseInt(this.selectedTime);
         let pastDate = new Date(today);
-        pastDate.setDate(today.getDate() - selectedDays);       
+        pastDate.setDate(today.getDate() - selectedDays);
         startDate_T = pastDate.toISOString().split('T')[0];
         endDate_T = today.toISOString().split('T')[0];
         if (!isNaN(pastDate.getTime())) {
@@ -208,7 +217,7 @@ export default {
         let today = new Date();
         let selectedDays = parseInt(this.selectedPeriod);
         let pastDate = new Date(today);
-        pastDate.setDate(today.getDate() - selectedDays);  
+        pastDate.setDate(today.getDate() - selectedDays);
         if (!isNaN(pastDate.getTime())) {
           startDate_P = pastDate.toISOString().split('T')[0];
           endDate_P = today.toISOString().split('T')[0];
@@ -218,10 +227,10 @@ export default {
       }
 
       try {
-        if (this.queryType === 'symbol')
-        {
-          const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
-            StocksID : this.queryTarget,
+        let response;
+        if (this.queryType === 'symbol') {
+          response = await axios.post('http://127.0.0.1:12000/api/StockInformation', {
+            StocksID: this.queryTarget,
             Stockstitle: '',
             StartDate_T: startDate_T,
             EndDate_T: endDate_T,
@@ -230,11 +239,10 @@ export default {
             selectedIndex: this.selectedIndex
           });
         }
-        else
-        {
-          const response = await axios.post('http://127.0.0.1:12000/api/Stockinformation', {
-            StocksID : '',
-            Stockstitle : this.queryTarget,
+        else {
+          response = await axios.post('http://127.0.0.1:12000/api/StockInformation', {
+            StocksID: '',
+            Stockstitle: this.queryTarget,
             StartDate_T: startDate_T,
             EndDate_T: endDate_T,
             StartDate_P: startDate_P,
@@ -242,145 +250,65 @@ export default {
             selectedIndex: this.selectedIndex
           });
         }
-     
         const data = response.data;
-        const fs = require('fs');
+        const fixedData = data.replace(/"y": NaN/g, '"y": "NaN"');
+        const dataObject = JSON.parse(fixedData);
 
-        if (data.StatusCode === 200) {
-          const returnData = data.ReturnData;
+        const stockName = dataObject['Stockstitle']
+        document.getElementById('stock-name').textContent = stockName;
 
-          const stockName = returnData.Stockstitle;
-          document.getElementById('stock-name').textContent = stockName;
+        const stockSymbol = dataObject.StocksID;
+        document.getElementById('stock-symbol').textContent = stockSymbol;
 
-          const stockSymbol = returnData.StocksID;
-          document.getElementById('stock-symbol').textContent = stockSymbol;
-
-          // this.priceToday = 319.31;
-          // this.priceYesterday = 315.23;
-          this.priceToday = returnData.priceToday;
-          this.priceYesterday = returnData.priceYesterday;
-          this.changeColor();
-
-          // 寫入 StockPrice 到 stockPrice.js
-          const stockPrices = returnData.StockPrice;
-          const fileContent1 = `const seriesData = ${JSON.stringify(stockPrices, null, 2)};\n\nexport default seriesData;\n`;
-          fs.writeFile('./data/stockPrice.js', fileContent1, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing stockPrices:', err);
-            } else {
-              console.log('Data fetched and saved to ./data/stockPrice.js');
-            }
-          });
-
-          // 寫入 volume 到 volume.js
-          const volume = returnData.Volume;
-          const fileContent2 = `const VolData = ${JSON.stringify(volume, null, 2)};\n\nexport default VolData;\n`;
-          fs.writeFile('./data/volume.js', fileContent2, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing volume:', err);
-            } else {
-              console.log('Data fetched and saved to ./data/volume.js');
-            }
-          });
-
-          let var1, var2, var3;
-          let filePath ='./data/analysis.js';
-          switch (this.selectedIndex) {
-            case 'KDJ':
-              var1 = returnData.k;
-              var2 = returnData.d;
-              var3 = returnData.j;
-              break;
-            case 'MACD':
-              var1 = returnData.dif;
-              var2 = returnData.macd;
-              var3 = returnData.dif_macd;
-              break;
-            case 'RSI':
-              var1 = returnData.rsi6;
-              var2 = returnData.rsi12;
-              var3 = returnData.rsi24;
-              break;
-            default:
-              console.error('Unknown selectedIndex:', this.selectedIndex);
-          }
-          const fileContent_1 = `export const var1 = ${JSON.stringify(var1, null, 2)};\n\n`;
-          fs.writeFile(filePath, fileContent_1, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing var1:', err);
-            } else {
-              console.log('Successfully writing var1');
-            }
-          });
-
-          const fileContent_2 = `export const var2 = ${JSON.stringify(var2, null, 2)};\n\n`;
-          fs.appendFile(filePath, fileContent_2, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing var2:', err);
-            } else {
-              console.log('Successfully writing var2');
-            }
-          });
-
-          const fileContent_3 = `export const var3 = ${JSON.stringify(var3, null, 2)};\n\n`;
-          fs.appendFile(filePath, fileContent_3, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing var3:', err);
-            } else {
-              console.log('Successfully writing var3');
-            }
-          });
+        this.priceToday = dataObject.priceToday;
+        this.priceYesterday = dataObject.priceYesterday;
+        this.changeColor();
+        } catch (error) {
+          console.error('Error fetching index:', error);
         }
-        // console.log('queryType:', this.queryType);
-        // console.log('queryTarget:', this.queryTarget);
-        // console.log('priceToday:', this.priceToday)   
-      } catch (error) {
-        console.error('Error fetching index:', error);
+      },
+      changeColor() {
+        const elm1 = document.getElementById("price-change");
+        const elm2 = document.getElementById("price-change-percent");
+        const elm3 = document.getElementById("price-today");
+        if (this.priceChange > 0) {
+          elm1.style.color = '#EF403C';
+          elm1.textContent = `▲${this.priceChange}`;
+          elm2.style.color = '#EF403C';
+          elm3.style.color = '#EF403C';
+        } else if (this.priceChange < 0) {
+          elm1.style.color = '#00B746';
+          elm2.style.color = '#00B746';
+          elm3.style.color = '#00B746';
+          let noMinus = Math.abs(this.priceChange);
+          elm1.textContent = `▼${noMinus}`;
+        }
+      },
+    },
+    computed: {
+      priceChange() {
+        return (this.priceToday - this.priceYesterday).toFixed(2);
+      },
+      priceChangePercent() {
+        return ((this.priceChange / this.priceYesterday) * 100).toFixed(2);
       }
     },
-    changeColor() {
-      const elm1 = document.getElementById("price-change");
-      const elm2 = document.getElementById("price-change-percent");
-      const elm3 = document.getElementById("price-today");
-      if(this.priceChange > 0){       
-        elm1.style.color = '#EF403C';
-        elm1.textContent = `▲${this.priceChange}`;
-        elm2.style.color = '#EF403C';
-        elm3.style.color = '#EF403C';
-      }else if (this.priceChange < 0) {
-        elm1.style.color = '#00B746';       
-        elm2.style.color = '#00B746';
-        elm3.style.color = '#00B746';
-        let noMinus = Math.abs(this.priceChange);
-        elm1.textContent = `▼${noMinus}`;
-      }
-    },
-  },
-  computed: {
-    priceChange() {
-      return (this.priceToday - this.priceYesterday).toFixed(2);
-    },
-    priceChangePercent()
-    {
-      return ((this.priceChange/this.priceYesterday)*100).toFixed(2);
+    mounted() {
+      this.fetchInfo();
     }
-  },
-  mounted() {
-    this.fetchInfo();
   }
-}
 </script>
 
 <style lang='scss' scoped>
 .custom-dropdown .dropdown-menu {
-    left: 0 !important;
+  left: 0 !important;
 }
 
 @import url(https://fonts.googleapis.com/css?family=Roboto);
 
 body {
   font-family: Roboto, sans-serif;
-  left :0;
+  left: 0;
 }
 
 #chart {
@@ -388,7 +316,7 @@ body {
   margin: 35px auto;
 }
 
-.input{
+.input {
   display: flex;
   align-items: center;
   font-size: 36px;
@@ -399,21 +327,21 @@ body {
 }
 
 .stock-info {
-    display: flex;
-    align-items: center;
-    font-size: 36px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    margin-left: 20px;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 36px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 10px;
 }
 
 .current-price {
-    font-size: 24px;
-    font-weight: bold;
-    margin-left: 15px;
-    display: flex;
-    align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
 }
 
 .stock-name {
@@ -423,35 +351,34 @@ body {
   padding: 10px;
 }
 
-.stock-tab{
-    margin-top: 3%;
-    text-align: left;
+.stock-tab {
+  margin-top: 3%;
+  text-align: left;
 }
 
 label {
-    font-size: 16px;
-    color: #333;
-    margin-right: 10px;
+  font-size: 16px;
+  color: #333;
+  margin-right: 10px;
 }
 
 select {
-    font-size: 16px;
-    color: #333;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 16px;
+  color: #333;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 select:focus {
-    border-color: #66afe9;
-    outline: none;
-    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
 }
 
 select option {
-    padding: 10px;
+  padding: 10px;
 }
-
 </style>

@@ -9,9 +9,10 @@
             <div v-for="(stock, index) in stocks" :key="index" class="col">
               <div class="card1" :style="{ color: '#1B3C73', textAlign: 'left', fontSize: '18px', fontWeight: '600' }">
                 {{ stock.name }}
-                <h3 class="text-3xl font-bold text-left py-2" :style="{ color: '#D24545' }">{{ stock.change }}</h3>
+                <h3 class="text-3xl font-bold text-left py-2" :style="{ color: '#40A578' }">{{ stock.change }}</h3>
                 <div>
-                  <apexchart :width="270" type="area" :options="chartOptions" :series="[stock.StocksChart]"></apexchart>
+                  <apexchart :width="270" type="area" :options="getChartOptions(stock)"
+                    :series="[{ name: stock.name, data: stock.StocksChart }]"></apexchart>
                 </div>
               </div>
             </div>
@@ -231,107 +232,38 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-left pt-6" style="color:#1B3C73">股票新聞</h3>
-          <div class="row" style="padding-left:3%">
-            <div class="col-3" style="margin-right:7%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://s.yimg.com/ny/api/res/1.2/tgpRsvJuzgEtXXR.fi1cgA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTYyNztjZj13ZWJw/https://media.zenfs.com/en/ftnn_com_tw_939/9fe1ee7e1e721c0278f2537922b24e3f"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
+          <div>
+            <div class="row" style="padding-left:3%;">
+              <div v-for="(newsItem, index) in news" :key="index" class="col-3" style="margin-right:7%">
+                <div class="blog">
+                  <div class="container1" style="width:500px">
+                    <div class="row" style="width:95%;">
+                      <div class="col-md-4 col-lg-9">
+                        <div class="item">
+                          <div class="img">
+                            <img :src="newsItem.ImgUrl" alt="">
                           </div>
-                          <a
-                            href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              520前死守兩萬！三大法人賣超261.59億元…大盤竟反攻 網嚇壞：政府打銀彈進來啦</h5>
-                          </a>
-                          <p>FTNN新聞網
-                            2024年4月17日 週三 下午4:30
-                            [FTNN新聞網]記者蕭宥彤／台北報導...</p>
-                          <a href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html"
-                            class="more"><svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
+                          <div class="info">
+                            <div class="date">
+                              <span>{{ formatDate(newsItem.Time) }} <br> {{ formatMonth(newsItem.Time) }}</span>
+                            </div>
+                            <a :href="newsItem.Url">
+                              <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
+                                {{ newsItem.Title}}
+                              </h5>
+                            </a>
+                            <p>{{ newsItem.summary }}</p>
+                            <a :href="newsItem.Url" class="more">
+                              <svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
+                                <path fill-rule="evenodd"
+                                  d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                  clip-rule="evenodd"></path>
+                              </svg>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-3" style="margin-right:7%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://m.cnyes.com/_next/image?url=https%3A%2F%2Fcimg.cnyes.cool%2Fprod%2Fnews%2F5528121%2Fl%2Fb9707e1313b96132518de0d4429955ec.jpg&w=3840&q=75"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
-                          </div>
-                          <a href="https://m.cnyes.com/news/id/5528121">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              外資連六賣 賣超222億元鎖定面板雙虎提款 逆勢狂掃大同5.1萬張</h5>
-                          </a>
-                          <p>台股今 (17) 日大漲 311 點，收在 20213.33 點，重返 2 萬點大關並靠攏月線，外資呈現...</p>
-                          <a href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html"
-                            class="more"><svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-3" style="margin-right:5%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://m.cnyes.com/_next/image?url=https%3A%2F%2Fcimg.cnyes.cool%2Fprod%2Fnews%2F5528138%2Fl%2F4ab3cea13255b7bc1cad6ecf108e0d9c.jpg&w=3840&q=75"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
-                          </div>
-                          <a href="https://m.cnyes.com/news/id/5528138">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              M31 3月較去年同期轉虧 每股虧0.1元</h5>
-                          </a>
-                          <p>IP 業者 M31(6643-TW) 今 (17) 日公告 3 月自結，稅後虧損 300 萬元，較上月與去年同期轉虧，每股稅後虧損 0.1 元...</p>
-                          <a href="https://m.cnyes.com/news/id/5528138" class="more"><svg viewBox="0 0 10 10"
-                              fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
-                        </div>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
               </div>
@@ -677,108 +609,38 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-left pt-6" style="color:#1B3C73">股票新聞</h3>
-          <div class="row" style="padding-left:3%;">
-            <div class="col-3" style="margin-right:7%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://s.yimg.com/ny/api/res/1.2/tgpRsvJuzgEtXXR.fi1cgA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTYyNztjZj13ZWJw/https://media.zenfs.com/en/ftnn_com_tw_939/9fe1ee7e1e721c0278f2537922b24e3f"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
+          <div>
+            <div class="row" style="padding-left:3%;">
+              <div v-for="(newsItem, index) in news" :key="index" class="col-3" style="margin-right:7%">
+                <div class="blog">
+                  <div class="container1" style="width:500px">
+                    <div class="row" style="width:95%;">
+                      <div class="col-md-4 col-lg-9">
+                        <div class="item">
+                          <div class="img">
+                            <img :src="newsItem.ImgUrl" alt="">
                           </div>
-                          <a
-                            href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              520前死守兩萬！三大法人賣超261.59億元…大盤竟反攻 網嚇壞：政府打銀彈進來啦</h5>
-                          </a>
-                          <p>FTNN新聞網
-                            2024年4月17日 週三 下午4:30
-                            [FTNN新聞網]記者蕭宥彤／台北報導
-                            台股今（17）日開高走高...</p>
-                          <a href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html"
-                            class="more"><svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
+                          <div class="info">
+                            <div class="date">
+                              <span>{{ formatDate(newsItem.Time) }} <br> {{ formatMonth(newsItem.Time) }}</span>
+                            </div>
+                            <a :href="newsItem.urlrl">
+                              <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
+                                {{ newsItem.title }}
+                              </h5>
+                            </a>
+                            <p>{{ newsItem.summary }}</p>
+                            <a :href="newsItem.Url" class="more">
+                              <svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
+                                <path fill-rule="evenodd"
+                                  d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                  clip-rule="evenodd"></path>
+                              </svg>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-3" style="margin-right:7%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://m.cnyes.com/_next/image?url=https%3A%2F%2Fcimg.cnyes.cool%2Fprod%2Fnews%2F5528121%2Fl%2Fb9707e1313b96132518de0d4429955ec.jpg&w=3840&q=75"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
-                          </div>
-                          <a href="https://m.cnyes.com/news/id/5528121">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              外資連六賣 賣超222億元鎖定面板雙虎提款 逆勢狂掃大同5.1萬張</h5>
-                          </a>
-                          <p>台股今 (17) 日大漲 311 點，收在 20213.33 點，重返 2 萬點大關並靠攏月線，外資呈現...</p>
-                          <a href="https://tw.stock.yahoo.com/news/520%E5%89%8D%E6%AD%BB%E5%AE%88%E5%85%A9%E8%90%AC-%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B3%A3%E8%B6%85261-59%E5%84%84%E5%85%83-%E5%A4%A7%E7%9B%A4%E7%AB%9F%E5%8F%8D%E6%94%BB-%E7%B6%B2%E5%9A%87%E5%A3%9E-083000632.html"
-                            class="more"><svg viewBox="0 0 10 10" fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-3" style="margin-right:5%">
-              <div class="blog">
-                <div class="container1" style="width:500px">
-                  <div class="row" style="width:95%;">
-                    <div class="col-md-4 col-lg-9">
-                      <div class="item">
-                        <div class="img">
-                          <img
-                            src="https://m.cnyes.com/_next/image?url=https%3A%2F%2Fcimg.cnyes.cool%2Fprod%2Fnews%2F5528138%2Fl%2F4ab3cea13255b7bc1cad6ecf108e0d9c.jpg&w=3840&q=75"
-                            alt="">
-                        </div>
-                        <div class="info">
-                          <div class="date">
-                            <span>17 <br> Apr.</span>
-                          </div>
-                          <a href="https://m.cnyes.com/news/id/5528138">
-                            <h5 style="color:#0C2D57;font-weight: 500;font-size: 20px;margin-bottom:12px">
-                              M31 3月較去年同期轉虧 每股虧0.1元</h5>
-                          </a>
-                          <p>IP 業者 M31(6643-TW) 今 (17) 日公告 3 月自結，稅後虧損 300 萬元，較上月與去年同期轉虧，每股稅後虧損 0.1 元...</p>
-                          <a href="https://m.cnyes.com/news/id/5528138" class="more"><svg viewBox="0 0 10 10"
-                              fill="currentColor" strokeWidth="2" class="w-6 h-5">
-                              <path fill-rule="evenodd"
-                                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                                clip-rule="evenodd"></path>
-                            </svg></a>
-                        </div>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
               </div>
@@ -793,33 +655,25 @@
   </div>
 </template>
 <script>
-// import 'vue-toastification/dist/index.css';
-// import GoTop from '@inotom/vue-go-top';
-import VueApexCharts from 'vue-apexcharts';
 import axios from 'axios';
+import VueApexCharts from 'vue-apexcharts';
+
 export default {
   components: {
-    // GoTop,
-    apexchart: VueApexCharts,
-    timestamp: ""
+    apexchart: VueApexCharts
   },
   data() {
     return {
       stocks: [],
-      chartOptions: {
-        chart: {
-          type: 'area',
-        },
-        xaxis: {
-          categories: []
-        },
-        // 其他圖表配置選項
-      },
-      compatConfig: { MODE: 3 }
+      timestamp: '',
+      compatConfig: { MODE: 3 },
+      news:[]
     };
-  }, created() {
-    this.updateTimestamp(); 
-    setInterval(this.updateTimestamp, 1000); 
+  },
+  created() {
+    this.updateTimestamp();
+    setInterval(this.updateTimestamp, 1000);
+    this.fetchNews();
   },
   methods: {
     async fetchIndex() {
@@ -830,23 +684,67 @@ export default {
           time: this.timestamp
         });
         const data = response.data;
-        this.stocks = data.stocks.map(stock => ({
-          StocksChart: stock.StocksChart,
-          name: stock.name,
-          change: stock.change
-        }));
-      } catch (error) {
-        console.error('Error fetching index:', error);
-      }
-    },
-    async fetchNews() {
-      try {
-        const response = await axios.post('http://127.0.0.1:12000/api/newsStocks', {
-          StocksNum: 3,
+        console.log(data)
+        this.stocks = data.map((stock) => {
+          const change = this.calculateChange(stock.StocksChart);
+          return {
+            StocksChart: stock.StocksChart,
+            name: stock.StocksTitle,
+            change
+          };
         });
       } catch (error) {
         console.error('Error fetching index:', error);
       }
+    },
+    calculateChange(stocksChart) {
+      if (stocksChart.length < 2) return 'N/A';
+      const initialPrice = stocksChart[0];
+      const finalPrice = stocksChart[stocksChart.length - 1];
+      const change = ((finalPrice - initialPrice) / initialPrice) * 100;
+      return change.toFixed(2) + '%';
+    },
+    async fetchNews() {
+      try {
+        const response = await axios.post('http://127.0.0.1:12000/api/newsStocks', {
+          newsNum: 3
+        });
+        this.news = response.data;
+        console.log(this.news)
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      }
+    },
+    getChartOptions(stock) {
+      return {
+        chart: {
+          type: 'area',
+          height: 150
+        },
+        xaxis: {
+          categories: stock.StocksChart.map((_, index) => index + 1) // 示例x轴
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        dataLabels: {
+          enabled: false
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.9,
+            stops: [0, 100]
+          }
+        },
+        tooltip: {
+          x: {
+            show: true
+          }
+        }
+      };
     },
     updateTimestamp() {
       const today = new Date();
@@ -857,6 +755,14 @@ export default {
         String(today.getMinutes()).padStart(2, '0') + ':' +
         String(today.getSeconds()).padStart(2, '0');
       this.timestamp = dateTime;
+    },
+    formatDate(timestamp) {
+      const date = new Date(timestamp);
+      return date.getDate();
+    },
+    formatMonth(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString('default', { month: 'short' });
     }
   },
   mounted() {
@@ -866,6 +772,7 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 .card1 {
   margin-top: 2%;

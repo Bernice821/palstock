@@ -26,7 +26,6 @@
         <router-link to="/market"><a href="#" class="dashboard-nav-item"><i class="fas fa-cogs"></i>大盤市況 </a></router-link>
         <router-link to="/news"><a href="#" class="dashboard-nav-item"><i class="fas fa-user"></i>股票新聞</a></router-link>
         <div class="nav-item-divider"></div>
-        <a href="#" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Logout </a>
       </nav>
     </div>
 
