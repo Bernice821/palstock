@@ -1,4 +1,4 @@
-from flask import  jsonify, Blueprint
+from flask import  jsonify, Blueprint, render_template
 from datetime import datetime
 from .init import db
 from .model import New, Stock, Figure, Indicator
@@ -118,3 +118,8 @@ def insert_indicators():
     db.session.commit()
     
     return jsonify({'Success': 'Figures inserted!'}), 200
+
+@database.route('/getNews')
+def get():
+    news = db.session.execute(db.select(New).order_by(New.time_stamp.desc())).scalars().all()
+    return render_template('list_news.html', news=news)
