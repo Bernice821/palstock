@@ -54,10 +54,10 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run backend tests
-      # working-directory: ./backend
+      working-directory: ./backend
       run: |
-        # source venv/bin/activate
-        # pytest
+        source venv/bin/activate
+        pytest --cov=./ --cov-report=term --cov-fail-under=30
         echo "test"  # 暂时的占位符，替换为实际的测试命令
 
     - name: Deploy to GitHub Pages
