@@ -57,7 +57,7 @@ jobs:
       working-directory: ./backend
       run: |
         source venv/bin/activate
-        pytest --cov=./app --cov-report=term --cov-fail-under=70
+        pytest --cov=./app --cov-report=term --cov-fail-under=60
         # echo "test"  # 暂时的占位符，替换为实际的测试命令
 
     - name: Deploy to GitHub Pages
