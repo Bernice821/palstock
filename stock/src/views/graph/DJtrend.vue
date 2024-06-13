@@ -25,7 +25,7 @@ export default {
           height: 350
         },
         xaxis: {
-          type: 'datetime',
+          type: 'category',
           labels: {
             formatter: function(value) {
               const date = new Date(value);

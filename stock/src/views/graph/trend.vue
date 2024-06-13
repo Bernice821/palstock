@@ -1,10 +1,10 @@
 <template>
   <div id="wrapper" style="margin-left: 15%;">
     <div id="stock">
-      <apexchart type="candlestick" height="400" :options="chartOptions1" :series="series1"></apexchart>
+      <apexchart height="400" :options="chartOptions1" :series="series1"></apexchart>
     </div>
     <div id="volume">
-      <apexchart type="bar" height="150" :options="chartOptions2" :series="series2" style="margin-top: 5%;"></apexchart>
+      <apexchart height="200" :options="chartOptions2" :series="series2" style="margin-top: 5%;"></apexchart>
     </div>
 
   </div>
@@ -24,7 +24,7 @@ export default {
       series1: [{ data: seriesData }],
       chartOptions1: {
         chart: {
-          group: 'stock',
+          group: 'stock_trend',
           id: 'price',
           type: 'candlestick',
           height: 350
@@ -70,9 +70,9 @@ export default {
       }],
       chartOptions2: {
         chart: {
-          group: 'stock',
+          group: 'stock_trend',
           id: 'volume',
-          type: 'column',
+          type: 'bar',
         },
         plotOptions: {
             bar: {
