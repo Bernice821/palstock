@@ -3,8 +3,10 @@ import yfinance as yf
 import numpy as np
 import json
 import calendar
+import matplotlib.pyplot as plt
 from datetime import date
 import math
+import os
 
 
 #buy and hold 策略
@@ -248,19 +250,21 @@ def calculate_mirr(cashflows, finance_rate, reinvest_rate):
     pv_negative_cashflows = np.sum(negative_cashflows / (1 + finance_rate) ** np.arange(n))
     fv_positive_cashflows = np.sum(positive_cashflows * (1 + reinvest_rate) ** (n - np.arange(n) - 1))
 
-    try:
+    
+    if n!= 1 or pv_negative_cashflows!= 0:
         mirr = (fv_positive_cashflows / -pv_negative_cashflows) ** (1 / (n - 1)) - 1
         return round(mirr, 4)
-    except:
-        return 0
+    return 0
 
 
 
 
 if __name__ == '__main__':
-
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    input_path  = os.path.join(current_dir, './buy_and_hold.json')
+    output_path  = os.path.join(current_dir, './output.json')
     #獲取傳入json檔資料
-    with open('./buy_and_hold.json', 'r') as f:
+    with open(input_path, 'r') as f:
         data = json.load(f)
     Timeperiod= data['EndYear']- data['StartYear']+ 1
     StartYear, StartMonth= data['StartYear'], data['FirstMonth']
@@ -270,7 +274,7 @@ if __name__ == '__main__':
     initial_Amount= data['initialAmount']
     ContributionAmount= 0
     Withdraw_account= 0
-    Benhmark= data["Benchmark"]
+    Benchmark= data["Benchmark"]
     Deposit_account= 0
     Frequency= 0
 
@@ -310,7 +314,7 @@ if __name__ == '__main__':
             stock_data = bt.feeds.PandasData(dataname=yf.download(StockID, start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             cerebro.adddata(stock_data)
         #大盤購買策略
-        if Benhmark== 1:
+        if Benchmark== 1:
             stock_data = bt.feeds.PandasData(dataname=yf.download('^TWII', start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             TWII.adddata(stock_data)
             TWII.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount, allocation= [1], frequency= Frequency, rebalancing= Rebalancing)
@@ -346,6 +350,7 @@ if __name__ == '__main__':
         TWRR = results[0].analyzers.twrr_analyzer.get_analysis()
         MIRR = calculate_mirr(results[0].cashflows, 0.05, 0.07)
 
+        '''
         print("投資報酬率:", results[0].Roi)
         print("年均複合成長率: ", results[0].CAGR)
         print("標準差:", round(periodstats['stddev'],2))
@@ -357,22 +362,48 @@ if __name__ == '__main__':
         print(f"夏普比率: {round(sharpe_ratio['sharperatio'],2)}")
         print(f"最大回撤: {round(drawdown['max']['drawdown'],2)}")
         print('索蒂諾比率:', round(sortino_ratio['sortino_ratio'],2))
-        if Benhmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
+        if Benchmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
+        '''
 
+        try:Returndata['title']= "Portfolio"+str(i+1)   
+        except: Returndata['title']= 0
 
-        Returndata['title']= "Portfolio"+str(i+1)
-        Returndata['Portfolio']= results[0].Roi
-        Returndata['FinalBalance']= results[0].FinalBalance
-        Returndata['CAGR']= results[0].CAGR
-        Returndata['TWRR']= TWRR
-        Returndata['MIRR']= MIRR
-        Returndata['Stdev']= round(periodstats['stddev'],2)
-        Returndata['BestYear']= results[0].BestYear
-        Returndata['WorstYear']= results[0].WorstYear
-        Returndata['Max.Drawdown']= round(drawdown['max']['drawdown'],2)
-        Returndata['SharpeRatio']= round(sharpe_ratio['sharperatio'],2)
-        Returndata['SortioRatio']= round(sortino_ratio['sortino_ratio'],2)
-        if Benhmark==1: Returndata['Benhmark']= round(results[0].Roi- TWII_results[0].Roi,3)
+        try:Returndata['Portfolio']= results[0].Roi
+        except:Returndata['Portfolio']= 0
+        
+        try:Returndata['FinalBalance']= results[0].FinalBalance
+        except:Returndata['FinalBalance']= 0
+
+        try:Returndata['CAGR']= results[0].CAGR
+        except:Returndata['CAGR']= 0
+        
+        try:Returndata['TWRR']= TWRR
+        except:Returndata['TWRR']= 0
+        
+        try:Returndata['MIRR']= MIRR
+        except:Returndata['MIRR']= 0
+        
+        try:Returndata['Stdev']= round(periodstats['stddev'],2)
+        except:Returndata['Stdev']= 0
+
+        try:Returndata['BestYear']= results[0].BestYear
+        except:Returndata['BestYear']= 0
+        
+        try:Returndata['WorstYear']= results[0].WorstYear
+        except:Returndata['WorstYear']= 0
+
+        try:Returndata['Max.Drawdown']= round(drawdown['max']['drawdown'],2)
+        except:Returndata['Max.Drawdown']= 0
+
+        try:Returndata['SharpeRatio']= round(sharpe_ratio['sharperatio'],2)
+        except:Returndata['SharpeRatio']= 0
+
+        try:Returndata['SortioRatio']= round(sortino_ratio['sortino_ratio'],2)
+        except:Returndata['SortioRatio']= 0
+
+        if Benchmark==1: 
+            try:Returndata['Benchmark']= round(results[0].Roi- TWII_results[0].Roi,3)
+            except:Returndata['Benchmark']= round(results[0].Roi- TWII_results[0].Roi,3)
 
         #將股票回測結果貼上
         if set(Part)!= {0}:
@@ -383,5 +414,5 @@ if __name__ == '__main__':
     #except: Returndict['Message']= 'Error'
 
     # 輸出結果 JSON 文件
-    with open('./output.json', 'w', encoding='utf-8') as json_file:
+    with open(output_path, 'w', encoding='utf-8') as json_file:
         json.dump(Returndict, json_file, ensure_ascii=False, indent=4)

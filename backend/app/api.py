@@ -174,10 +174,11 @@ def strategy_stock():
     with open(input_path, 'w') as f:
         json.dump(data, f)
 
-    # test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
+    test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
 
-    # if test_res.returncode != 0:
-    #     return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
+    if test_res.returncode != 0:
+        return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
+    
     if os.path.exists(output_path):
         with open(output_path, 'r') as f:
             output = json.load(f)
