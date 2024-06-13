@@ -3,10 +3,8 @@ import yfinance as yf
 import numpy as np
 import json
 import calendar
-import matplotlib.pyplot as plt
 from datetime import date
 import math
-import os
 
 
 #buy and hold 策略
@@ -69,7 +67,7 @@ class BuyAndHold_More_Fund(bt.Strategy):
                 self.yearly_cash[self.data.datetime.date(0).year]+= self.p.monthly_cash
                 self.broker.add_cash(self.p.monthly_cash)
 
-        elif self.p.frequency!= 0 and self.p.month_sum% self.p.frequency== 0:
+        elif self.p.month_sum% self.p.frequency== 0:
             for i, d in enumerate(self.datas):    self.order_target_value(data= d, target= 0)
 
         self.p.month_sum+= 1
@@ -250,19 +248,19 @@ def calculate_mirr(cashflows, finance_rate, reinvest_rate):
     pv_negative_cashflows = np.sum(negative_cashflows / (1 + finance_rate) ** np.arange(n))
     fv_positive_cashflows = np.sum(positive_cashflows * (1 + reinvest_rate) ** (n - np.arange(n) - 1))
 
-    mirr = (fv_positive_cashflows / -pv_negative_cashflows) ** (1 / (n - 1)) - 1
-    return round(mirr, 4)
+    try:
+        mirr = (fv_positive_cashflows / -pv_negative_cashflows) ** (1 / (n - 1)) - 1
+        return round(mirr, 4)
+    except:
+        return 0
 
 
 
 
 if __name__ == '__main__':
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    input_path  = os.path.join(current_dir, './buy_and_hold.json')
-    output_path  = os.path.join(current_dir, './output.json')
 
     #獲取傳入json檔資料
-    with open(input_path, 'r') as f:
+    with open('./buy_and_hold.json', 'r') as f:
         data = json.load(f)
     Timeperiod= data['EndYear']- data['StartYear']+ 1
     StartYear, StartMonth= data['StartYear'], data['FirstMonth']
@@ -272,7 +270,7 @@ if __name__ == '__main__':
     initial_Amount= data['initialAmount']
     ContributionAmount= 0
     Withdraw_account= 0
-    Benchmark= data["Benchmark"]
+    Benhmark= data["Benchmark"]
     Deposit_account= 0
     Frequency= 0
 
@@ -303,17 +301,16 @@ if __name__ == '__main__':
         cerebro = bt.Cerebro()
         TWII= bt.Cerebro()
         
-        print(data['Portfolios'])
-        
         for portfolio in data['Portfolios']:
             #抓出回測股票代號
             StockID= portfolio['StockID']
             Part.append(portfolio['part'][i]/100)
+
             # 添加個股相關數據
             stock_data = bt.feeds.PandasData(dataname=yf.download(StockID, start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             cerebro.adddata(stock_data)
         #大盤購買策略
-        if Benchmark== 1:
+        if Benhmark== 1:
             stock_data = bt.feeds.PandasData(dataname=yf.download('^TWII', start= date(StartYear, StartMonth, 1), end= date(EndYear, EndMonth, calendar.monthrange(EndYear, EndMonth)[1])))
             TWII.adddata(stock_data)
             TWII.addstrategy(BuyAndHold_More_Fund, monthly_cash= ContributionAmount, allocation= [1], frequency= Frequency, rebalancing= Rebalancing)
@@ -360,7 +357,7 @@ if __name__ == '__main__':
         print(f"夏普比率: {round(sharpe_ratio['sharperatio'],2)}")
         print(f"最大回撤: {round(drawdown['max']['drawdown'],2)}")
         print('索蒂諾比率:', round(sortino_ratio['sortino_ratio'],2))
-        if Benchmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
+        if Benhmark==1: print('超越大盤: ', results[0].Roi- TWII_results[0].Roi)
 
 
         Returndata['title']= "Portfolio"+str(i+1)
@@ -375,15 +372,16 @@ if __name__ == '__main__':
         Returndata['Max.Drawdown']= round(drawdown['max']['drawdown'],2)
         Returndata['SharpeRatio']= round(sharpe_ratio['sharperatio'],2)
         Returndata['SortioRatio']= round(sortino_ratio['sortino_ratio'],2)
-        if Benchmark==1: Returndata['Benchmark']= round(results[0].Roi- TWII_results[0].Roi,3)
+        if Benhmark==1: Returndata['Benhmark']= round(results[0].Roi- TWII_results[0].Roi,3)
 
         #將股票回測結果貼上
-        Returndict['ReturnData'].append(Returndata)
+        if set(Part)!= {0}:
+            Returndict['ReturnData'].append(Returndata)
         # 繪製結果
         #cerebro.plot(style='candlestick', iplot=False,  start= date(2023,6,1), end= date(2024,5,4))
 
     #except: Returndict['Message']= 'Error'
 
     # 輸出結果 JSON 文件
-    with open(output_path, 'w', encoding='utf-8') as json_file:
+    with open('./output.json', 'w', encoding='utf-8') as json_file:
         json.dump(Returndict, json_file, ensure_ascii=False, indent=4)
