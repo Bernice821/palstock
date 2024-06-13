@@ -57,7 +57,7 @@ jobs:
       working-directory: ./backend
       run: |
         source venv/bin/activate
-        pytest --cov=./ --cov-report=term --cov-fail-under=30
+        pytest --cov=./app --cov-report=term --cov-fail-under=30
         echo "test"  # 暂时的占位符，替换为实际的测试命令
 
     - name: Deploy to GitHub Pages
@@ -68,5 +68,5 @@ jobs:
         publish_dir: ./stock/dist
 
     # 如果需要部署后端，可以在这里添加部署脚本，例如部署到Heroku，AWS，或其他服务
-    # - name: Deploy backend
-    #   run: ./backend/deploy.sh
+    - name: Deploy backend
+      run: ./backend/deploy.sh
