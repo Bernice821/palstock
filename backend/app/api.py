@@ -27,7 +27,7 @@ def news_stock():
 @api.route('/api/Market', methods=['POST'])
 def market_page():
     req = request.get_json()
-
+    
     start_tw = datetime.strptime(req['StartDate_Taiwan'], '%Y-%m-%d').replace(hour=0, minute=0, second=0)
     end_tw   = datetime.strptime(req['EndDate_Taiwan'], '%Y-%m-%d').replace(hour=23, minute=59, second=59)
     start_dj = datetime.strptime(req['StartDate_DJ'], '%Y-%m-%d').replace(hour=0, minute=0, second=0)
@@ -167,7 +167,6 @@ def strategy_stock():
     input_path  = os.path.join(cur_dir, '../backtest/buy_and_hold.json')
     py_path     = os.path.join(cur_dir, '../backtest/backtest.py')
     output_path  = os.path.join(cur_dir, '../backtest/output.json')
-    print(output_path)
 
     data = request.get_json()
     print(data)
