@@ -4,45 +4,71 @@
 
 name: Build and deploy Python app to Azure Web App - msdocs-python-webapp-quickstart-pal
 
-on:
-  push:
-    branches:
-      - master
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Python version
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.10'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        working-directory: ./backend
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+    - name: Install dependencies (frontend)
+      working-directory: ./stock
+      run: npm install --force
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+    - name: Build frontend
+      working-directory: ./stock
+      run: npm run build
 
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: |
-            release.zip
-            !venv/
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Create and start virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+
+    - name: Install dependencies (backend)
+      working-directory: ./backend
+      run: pip install -r requirements.txt
+
+    - name: Run backend tests
+      working-directory: ./backend
+      run: |
+        source venv/bin/activate
+        pytest --cov=./app --cov-report=term --cov-fail-under=70
+
+    - name: Package frontend and backend
+      run: |
+        zip -r release.zip . -x "venv/*" -x "stock/node_modules/*" -x ".git/*"
+
+    - name: Upload artifact for deployment jobs
+      uses: actions/upload-artifact@v3
+      with:
+        name: app
+        path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,23 +83,21 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: python-app
+          name: app
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_961CD52BFB204615A3400627B8AF4A73 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DF769C66D0DF474CA990C9E2A82E741F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6AA95737CA654AFCAE1707B03A192A3A }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'msdocs-python-webapp-quickstart-pal'
-          slot-name: 'Production'
-          
+          package: .
