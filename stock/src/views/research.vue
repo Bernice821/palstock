@@ -147,7 +147,7 @@
                         v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Initial Amount</label></div>
-                  <div class="col"><input type="number" min="100" max="2000" step="1" value="100"
+                  <div class="col"><input type="number" min="100" max="999999999" step="1" value="100"
                       placeholder="Enter your initial amount" class="form-control" required v-model="initialAmount">
                   </div>
                 </div>
@@ -180,7 +180,7 @@
                         v-b-popover.hover.top="'I am popover directive content!'" title="Popover Title"
                         style="color:#1B3C73;margin-right:12px">
                         *</b-button>Contribution Amount</label></div>
-                  <div class="col"><input type="number" min="100" max="2000" step="1" value="100"
+                  <div class="col"><input type="number" min="100" max="9999999999" step="1" value="100"
                       placeholder="Enter your initial amount" class="form-control" required
                       v-model="ContributionAmount" />
                   </div>
