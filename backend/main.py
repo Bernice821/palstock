@@ -8,23 +8,13 @@ from datetime import datetime
 import os
 import yfinance as yf
 import pandas as pd
-from flask import Flask, send_from_directory
 
-# app = create_app()
-# CORS(app)
-app = Flask(__name__, static_folder='stock/dist')
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+app = create_app()
+CORS(app)
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
 
-# @app.route('/historyStock')
+@app.route('/historyStock')
 def history_stock():
     data = yf.download('2330'+'.TW', start='2024-04-01', end='2024-05-31')
     data['ID'] = '2330'
@@ -41,5 +31,4 @@ def history_stock():
 
 if __name__ == '__main__':
     app.debug = True
-    # app.run(host='0.0.0.0', port=12000)
-    app.run()
+    app.run(host='0.0.0.0', port=12000)
