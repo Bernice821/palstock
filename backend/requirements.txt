@@ -1,0 +1,13 @@
+backtrader==1.9.78.123
+Flask==3.0.3
+Flask_Cors==4.0.1
+flask_sqlalchemy==3.1.1
+matplotlib==3.8.2
+numpy==1.23.4
+pandas==1.5.3
+pytest==8.1.1
+Requests==2.32.3
+selenium==4.21.0
+seleniumbase==4.25.4
+SQLAlchemy==2.0.29
+yfinance==0.2.40
