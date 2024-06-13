@@ -110,3 +110,5 @@ jobs:
           app-name: 'msdocs-python-webapp-quickstart-pal'
           slot-name: 'Production'
           package: .
+          startup-command: "gunicorn app:app -b 0.0.0.0:8000"
+          
