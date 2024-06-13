@@ -18,7 +18,7 @@ def create_database():
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'my_key'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://username:password@10.234.15.226:3306/{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://username:password@172.20.10.13:3306/{DB_NAME}'
     db.init_app(app)
 
     from .func import func
