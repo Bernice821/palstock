@@ -170,6 +170,7 @@ def strategy_stock():
     print(output_path)
 
     data = request.get_json()
+    print(data)
 
     with open(input_path, 'w') as f:
         json.dump(data, f)
@@ -177,7 +178,7 @@ def strategy_stock():
     test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
 
     if test_res.returncode != 0:
-        print("500")
+        print({'Error': 'Backtest failed', 'Details':test_res.stderr})
         return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
     
     if os.path.exists(output_path):
@@ -194,7 +195,6 @@ def strategy_stock():
             print(f'Data written to {file_path}')
         except Exception as e:
             print(f'Error writing data to {file_path}: {e}')
-
         return jsonify(output)
     else:
         return jsonify({'error': 'Output file not found'}), 500
@@ -321,7 +321,7 @@ def stock_information():
         var3 = stock['dif-macd']
 
         # 将数据写入到 JavaScript 文件中
-        js_content = f'export const var1 = {json.dumps(var1, indent=2)};\n'
+        js_content  = f'export const var1 = {json.dumps(var1, indent=2)};\n'
         js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
         js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
 

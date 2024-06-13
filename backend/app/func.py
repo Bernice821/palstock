@@ -7,7 +7,7 @@ import csv
 import os
 import json
 import pandas as pd
-import subprocess
+
 
 func = Blueprint('func', __name__)
 
