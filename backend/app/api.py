@@ -91,7 +91,7 @@ def market_page():
     js_content = f'export const IndicatorsHistory = {json.dumps(fig["IndicatorsHistory"], indent=2)};'
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/stock.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/stock.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -103,7 +103,7 @@ def market_page():
     js_content = f'export const seriesData = {json.dumps(fig["TaiwanStocksChart"], indent=2)};'
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/stockPrice.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/stockPrice.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -115,7 +115,7 @@ def market_page():
 
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/volume.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/volume.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -126,7 +126,7 @@ def market_page():
     js_content = f'export const series = {json.dumps(fig["DJStocksChart"], indent=2)};'
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/DJstockPrice.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/DJstockPrice.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -177,6 +177,7 @@ def strategy_stock():
     test_res = subprocess.run(['python3', py_path], capture_output=True, text=True)
 
     if test_res.returncode != 0:
+        print("500")
         return jsonify({'Error': 'Backtest failed', 'Details':test_res.stderr}), 500
     
     if os.path.exists(output_path):
@@ -186,7 +187,7 @@ def strategy_stock():
         js_content = f'export const seriesData = {json.dumps(output, indent=2)};'
 
         # 写入到 JavaScript 文件中
-        file_path = '../../palstock/stock/src/views/data/buyandhold.js'
+        file_path = os.path.join(cur_dir,'../../stock/src/views/data/buyandhold.js')
         try:
             with open(file_path, 'w') as file:
                 file.write(js_content)
@@ -273,7 +274,7 @@ def stock_information():
     js_content = f'export const seriesData = {json.dumps(stock_data, indent=2)};'
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/stockPrice.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/stockPrice.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -288,7 +289,7 @@ def stock_information():
     js_content = f'export const VolData = {json.dumps(stock_data, indent=2)};'
 
     # 写入到 JavaScript 文件中
-    file_path = '../../palstock/stock/src/views/data/volume.js'
+    file_path = os.path.join(cur_dir,'../../stock/src/views/data/volume.js')
     try:
         with open(file_path, 'w') as file:
             file.write(js_content)
@@ -306,7 +307,7 @@ def stock_information():
         js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
         js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
 
-        file_path = '../../palstock/stock/src/views/data/analysis.js'
+        file_path = os.path.join(cur_dir,'../../stock/src/views/data/analysis.js')
 
         try:
             with open(file_path, 'w') as file:
@@ -324,7 +325,7 @@ def stock_information():
         js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
         js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
 
-        file_path = '../../palstock/stock/src/views/data/analysis.js'
+        file_path = os.path.join(cur_dir,'../../stock/src/views/data/analysis.js')
 
         try:
             with open(file_path, 'w') as file:
@@ -342,7 +343,7 @@ def stock_information():
         js_content += f'export const var2 = {json.dumps(var2, indent=2)};\n'
         js_content += f'export const var3 = {json.dumps(var3, indent=2)};\n'
 
-        file_path = '../../palstock/stock/src/views/data/analysis.js'
+        file_path = os.path.join(cur_dir,'../../stock/src/views/data/analysis.js')
 
         try:
             with open(file_path, 'w') as file:

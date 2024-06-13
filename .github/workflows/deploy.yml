@@ -74,14 +74,14 @@ jobs:
     #       ./backend/deploy.sh
 
     # 部署后端
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    # - name: Azure Login
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: your-app-service-name  # 你的应用服务名称
-        package: ./backend
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+    # - name: Deploy to Azure Web App
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: your-app-service-name  # 你的应用服务名称
+    #     package: ./backend
+    #     publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
